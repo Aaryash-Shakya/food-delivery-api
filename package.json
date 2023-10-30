@@ -1,0 +1,21 @@
+{
+  "name": "food-delivery-api",
+  "version": "1.0.0",
+  "description": "A extensive backend api for a food delivery service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.20",
+    "@types/node": "^20.8.9",
+    "@types/nodemon": "^1.19.4",
+    "express": "^4.18.2",
+    "node": "^21.1.0",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
