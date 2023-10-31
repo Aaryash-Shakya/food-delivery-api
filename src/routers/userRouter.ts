@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { UserController } from "../controllers/userController";
 
 class UserRouter {
     public router: Router;
@@ -11,11 +12,13 @@ class UserRouter {
         this.patchRoutes();
         this.deleteRoutes();
     }
-    
+
     getRoutes() {
-        this.router.get('/test',(req,res)=>{
-            res.status(200).send('test success')
-        })
+        this.router.get("/test", UserController.test1, UserController.test2);
+
+        this.router.get("/login", UserController.login);
+        // alternative
+        // this.router.get('/login',(req,res)=>UserController.login(req,res))
     }
 
     postRoutes() {}

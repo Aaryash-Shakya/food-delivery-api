@@ -1,6 +1,3 @@
-import * as express from "express";
-import * as mongoose from "mongoose";
-import { getEnvironmentVariables } from "./environments/environment";
 import { Server } from "./server";
 
 const server = new Server().app;

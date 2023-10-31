@@ -21,9 +21,6 @@ export class Server {
     }
 
     setRoutes() {
-        this.userRoutes()
-    }
-    userRoutes() {
         this.app.use("/api/user", userRouter);
     }
 }
