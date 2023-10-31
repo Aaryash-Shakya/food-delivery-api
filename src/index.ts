@@ -6,48 +6,18 @@ app.listen(3000, () => {
     console.log("server running at port 3000");
 });
 
-// learning promise
-function bookByX(): boolean {
-    return false;
-}
+// learning spread operator
+let obj1={id:1,name:'apple'}
+console.log(obj1)
+let obj2=obj1 // this creates reference to same object
+obj2.name='ball'
+console.log(obj1)
 
-function bookByY(): boolean {
-    return false;
-}
+let obj3={...obj1,name:'cat',address:'ktm'}
+console.log(obj1); // obj 1 is unaffected as ... makes a copy of it
+console.log(obj3);
 
-function result(): Promise<string> {
-    return new Promise((resolve, reject) => {
-        if (bookByX()) {
-            resolve("Book is written by X");
-        } else if (bookByY()) {
-            resolve("Book is written by Y");
-        } else {
-            reject("Book not found");
-        }
-    });
-}
-
-// result()
-//     .then((data) => {
-//         console.log(data);
-//     })
-//     .catch((err) => {
-//         console.log(err);
-//     });
-
-async function final() {
-    try {
-        const result1 = result();
-        return result1;
-    } catch (err) {
-        return Promise.reject(err)
-    }
-}
-
-final()
-    .then((data) => {
-        console.log(data);
-    })
-    .catch((e) => {
-        console.log(e)
-    });
+let arr1 =[1,2,3]
+let arr2 =[4,5,6]
+let arr3=[...arr1,...arr2,-1,-2]
+console.log(arr3);
