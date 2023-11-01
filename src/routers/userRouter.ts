@@ -16,7 +16,7 @@ class UserRouter {
     getRoutes() {
         this.router.get("/test", UserController.test1, UserController.test2);
 
-        this.router.get("/login", UserController.login);
+        this.router.get("/login", UserController.login, UserController.test2);
         // alternative
         // this.router.get('/login',(req,res)=>UserController.login(req,res))
     }
