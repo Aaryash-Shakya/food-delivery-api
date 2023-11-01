@@ -4,12 +4,19 @@ import { getEnvironmentVariables } from "./environments/environment";
 import userRouter from "./routers/userRouter";
 
 export class Server {
+    
     public app: express.Application = express();
 
     constructor() {
         this.setConfiguration();
+
+        // initialize all routes
         this.setRoutes();
+
+        // if route not found above rest are handled by handle404Error
         this.handle404Error();
+
+        // only accessed when a route redirects to it by calling next(error:Error)
         this.handleErrors();
     }
 

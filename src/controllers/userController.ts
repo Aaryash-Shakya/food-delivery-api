@@ -6,11 +6,14 @@ export class UserController {
         const error = new Error("error for test purposes");
         next(error);
     }
+
+    // for test purposes only
     static test1(req: any, res, next) {
         console.log("test1");
         req.msg = "this is msg of test1";
         next();
     }
+
     static test2(req, res) {
         console.log("test2");
         res.send("test2");
