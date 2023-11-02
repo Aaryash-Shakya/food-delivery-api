@@ -1,3 +1,5 @@
+import userModel from "../models/userModel";
+
 export class UserController {
     static login(req, res, next) {
         // res.status(500).send("login unavailable");
@@ -6,7 +8,24 @@ export class UserController {
         // const error = new Error("error for test purposes");
         // next(error);
 
-        res.send(req.params);
+        const { email, password } = req.body;
+
+        const user = new userModel({
+            // email: email,
+            // password: password
+
+            // shortcut
+            email,
+            password,
+        });
+
+        user.save()
+            .then((user) => {
+                res.status(200).send(user);
+            })
+            .catch((err) => {
+                next(err);
+            });
     }
 
     // for test purposes only

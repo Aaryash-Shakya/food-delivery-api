@@ -21,12 +21,13 @@ class UserRouter {
         // for testing middleware
         this.router.get("/test", UserController.test1, UserController.test2);
 
-        this.router.post("/login", UserController.login);
         // alternative
         // this.router.get('/login',(req,res)=>UserController.login(req,res))
     }
 
-    postRoutes() {}
+    postRoutes() {
+        this.router.post("/login", UserController.login);
+    }
 
     putRoutes() {}
 
