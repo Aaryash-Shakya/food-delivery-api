@@ -2,9 +2,9 @@ import * as express from "express";
 import * as mongoose from "mongoose";
 import { getEnvironmentVariables } from "./environments/environment";
 import userRouter from "./routers/userRouter";
+import * as bodyParser from "body-parser";
 
 export class Server {
-    
     public app: express.Application = express();
 
     constructor() {
@@ -22,6 +22,9 @@ export class Server {
 
     setConfiguration() {
         this.connectMongoDB();
+
+        // to parse form encoded
+        this.configureBodyParser();
     }
 
     connectMongoDB() {
@@ -29,6 +32,10 @@ export class Server {
             .connect(getEnvironmentVariables().db_uri)
             .then(() => console.log("connected to mongodb"))
             .catch((err) => console.log(err));
+    }
+
+    configureBodyParser() {
+        this.app.use(bodyParser.urlencoded({ extended: true }));
     }
 
     setRoutes() {
@@ -47,7 +54,7 @@ export class Server {
     handleErrors() {
         this.app.use((error, req, res, next) => {
             const errorStatus = (req as any).errorStatus || 500;
-            console.log(`error occurred: ${errorStatus}`)
+            console.log(`error occurred: ${errorStatus}`);
             res.status(errorStatus).json({
                 status: errorStatus,
                 message:

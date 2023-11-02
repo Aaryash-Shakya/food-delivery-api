@@ -2,9 +2,11 @@ export class UserController {
     static login(req, res, next) {
         // res.status(500).send("login unavailable");
 
-        (req as any).errorStatus = 500;
-        const error = new Error("error for test purposes");
-        next(error);
+        // (req as any).errorStatus = 500;
+        // const error = new Error("error for test purposes");
+        // next(error);
+
+        res.send(req.params);
     }
 
     // for test purposes only

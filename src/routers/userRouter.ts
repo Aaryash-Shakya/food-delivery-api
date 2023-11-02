@@ -8,7 +8,7 @@ class UserRouter {
     constructor() {
         // create router
         this.router = Router();
-        
+
         // initialize all routes for user
         this.getRoutes();
         this.postRoutes();
@@ -21,7 +21,7 @@ class UserRouter {
         // for testing middleware
         this.router.get("/test", UserController.test1, UserController.test2);
 
-        this.router.get("/login", UserController.login, UserController.test2);
+        this.router.post("/login", UserController.login);
         // alternative
         // this.router.get('/login',(req,res)=>UserController.login(req,res))
     }
