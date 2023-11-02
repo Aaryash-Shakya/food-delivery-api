@@ -1,31 +1,19 @@
 import userModel from "../models/userModel";
+import { validationResult } from "express-validator";
 
 export class UserController {
-    static login(req, res, next) {
-        // res.status(500).send("login unavailable");
-
-        // (req as any).errorStatus = 500;
-        // const error = new Error("error for test purposes");
-        // next(error);
-
-        const { email, password } = req.body;
-
-        const user = new userModel({
-            // email: email,
-            // password: password
-
-            // shortcut
-            email,
-            password,
-        });
-
-        user.save()
-            .then((user) => {
-                res.status(200).send(user);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    static signup(req, res, next) {
+        const errors = validationResult(req);
+        const { name, email, password } = req.body;
+        if (!errors.isEmpty()) {
+            return (
+                res
+                    .status(400)
+                    // map is used to only show the msg property
+                    .json({ errors: errors.array().map((x) => x.msg) })
+            );
+        }
+        return res.json({ name, email, password });
     }
 
     // for test purposes only

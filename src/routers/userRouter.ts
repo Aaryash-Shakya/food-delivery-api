@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController";
+import { validationResult } from "express-validator";
+import { UserValidator } from "../validators/userValidator";
 
 class UserRouter {
     // make public to access from server
@@ -26,7 +28,11 @@ class UserRouter {
     }
 
     postRoutes() {
-        this.router.post("/login", UserController.login);
+        this.router.post(
+            "/signup",
+            UserValidator.signup(),
+            UserController.signup
+        );
     }
 
     putRoutes() {}
