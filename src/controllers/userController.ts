@@ -25,7 +25,6 @@ export class UserController {
         };
 
         const user = new userModel(data);
-
         user.save()
             .then((user) => {
                 res.send(user);
@@ -33,6 +32,17 @@ export class UserController {
             .catch((error) => {
                 next(error);
             });
+
+        
+        // note alternative method: remember to put async in function
+        /*
+        try {
+            const user = await userModel(data).save();
+            res.send(user);
+        } catch (error) {
+            next(error);
+        }
+        */
     }
 
     // for test purposes only
