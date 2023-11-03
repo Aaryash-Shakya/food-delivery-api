@@ -10,7 +10,7 @@ export class Utils {
 
     // add times to date
     static generateVerificationTime(base: Date, minutesAdded: number) {
-        base.setMinutes(base.getMinutes()+minutesAdded)
-        return base
+        base.setMinutes(base.getMinutes() + minutesAdded);
+        return base;
     }
 }

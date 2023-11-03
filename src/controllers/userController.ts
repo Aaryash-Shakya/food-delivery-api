@@ -20,7 +20,10 @@ export class UserController {
             name,
             email,
             verification_token: Utils.generateOTP(),
-            verification_token_time: Utils.generateVerificationTime(new Date(),5),
+            verification_token_time: Utils.generateVerificationTime(
+                new Date(),
+                5
+            ),
             password,
             phone,
             type,
@@ -33,14 +36,17 @@ export class UserController {
                 // don't send token to frontend client
                 // todo: make a seperate cluster for token then you can just send the token id without populating it
                 // ! this doesn't work
-                delete user.verification_token
-                res.send(user);
+                // delete user.verification_token;
+                // res.send(user);
+
+                // note temp solution
+                const { verification_token, ...newUser } = user;
+                res.send(newUser);
             })
             .catch((error) => {
                 next(error);
             });
-        
-        
+
         // note alternative method: remember to put async in function
         /*
         try {
@@ -50,7 +56,6 @@ export class UserController {
             next(error);
         }
         */
-        
     }
 
     // for test purposes only
