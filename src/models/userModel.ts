@@ -10,6 +10,19 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        email_verified: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+        verification_token: {
+            type: Number,
+            required: true,
+        },
+        verification_token_time: {
+            type: Date,
+            required: true,
+        },
         password: {
             type: String,
             required: true,
@@ -26,16 +39,16 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        created_at: {
-            type: Date,
-            required: true,
-            default: new Date(),
-        },
-        updated_at: {
-            type: Date,
-            required: true,
-            default: new Date(),
-        },
+        // created_at: {
+        //     type: Date,
+        //     required: true,
+        //     default: new Date(),
+        // },
+        // updated_at: {
+        //     type: Date,
+        //     required: true,
+        //     default: new Date(),
+        // },
     },
     {
         timestamps: true,

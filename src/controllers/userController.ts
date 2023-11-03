@@ -1,5 +1,6 @@
 import userModel from "../models/userModel";
 import { validationResult } from "express-validator";
+import { Utils } from "../utils/utils";
 
 export class UserController {
     static signup(req, res, next) {
@@ -18,6 +19,8 @@ export class UserController {
         const data = {
             name,
             email,
+            verification_token: Utils.generateOTP(),
+            verification_token_time: Utils.generateVerificationTime(new Date(),5),
             password,
             phone,
             type,
@@ -27,12 +30,16 @@ export class UserController {
         const user = new userModel(data);
         user.save()
             .then((user) => {
+                // don't send token to frontend client
+                // todo: make a seperate cluster for token then you can just send the token id without populating it
+                // ! this doesn't work
+                delete user.verification_token
                 res.send(user);
             })
             .catch((error) => {
                 next(error);
             });
-
+        
         
         // note alternative method: remember to put async in function
         /*
@@ -43,6 +50,7 @@ export class UserController {
             next(error);
         }
         */
+        
     }
 
     // for test purposes only
