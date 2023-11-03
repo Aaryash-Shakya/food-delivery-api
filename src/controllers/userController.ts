@@ -34,12 +34,13 @@ export class UserController {
         user.save()
             .then((user) => {
                 // don't send token to frontend client
-                // todo: make a seperate cluster for token then you can just send the token id without populating it
+                // todo: make a separate cluster for token then you can just send the token id without populating it
                 // ! this doesn't work
                 // delete user.verification_token;
                 // res.send(user);
 
                 // note temp solution
+                // assign the key verification_token to verification_token and rest to userUser 
                 const { verification_token, ...newUser } = user;
                 res.send(newUser);
             })

@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 
 export class UserValidator {
-    static signup() {
+    static signupValidator() {
         return [
             body("name", "Name is required").isString(),
             body("email", "Email is required").isEmail(),
