@@ -59,6 +59,10 @@ export class UserController {
         */
     }
 
+    static verifyEmail(){
+
+    }
+
     // for test purposes only
     static test1(req: any, res, next) {
         console.log("test1");

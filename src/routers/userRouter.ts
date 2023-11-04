@@ -35,7 +35,13 @@ class UserRouter {
         );
     }
 
-    putRoutes() {}
+    putRoutes() {
+		this.router.patch(
+			"/verify-email",
+			UserValidator.emailValidator(),
+			UserController.verifyEmail
+		)
+	}
 
     patchRoutes() {}
 
