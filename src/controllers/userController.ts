@@ -1,21 +1,22 @@
 import userModel from "../models/userModel";
-import { validationResult } from "express-validator";
 import { Utils } from "../utils/utils";
 
 export class UserController {
-    static signup(req, res, next) {
-        const errors = validationResult(req);
+    static async signup(req, res, next) {
         const { name, email, password, phone, type, status } = req.body;
-        if (!errors.isEmpty()) {
-            next(new Error(errors.array()[0].msg));
-            // return (
-            //     res
-            //         .status(400)
-            //         // map is used to only show the msg property
-            //         .json({ errors: errors.array().map((x) => x.msg) })
-            // );
+
+        // check conditions
+        try {
+            // check if email already exists
+            const existingUser = await userModel.findOne({ email: email });
+            if (existingUser) {
+                return next(new Error("Email is already registered"));
+            }
+        } catch (err) {
+            next(err);
         }
 
+        // post user
         const data = {
             name,
             email,
@@ -29,7 +30,6 @@ export class UserController {
             type,
             status,
         };
-
         const user = new userModel(data);
         user.save()
             .then((user) => {
@@ -37,15 +37,14 @@ export class UserController {
                 // todo: make a separate cluster for token then you can just send the token id without populating it
                 // ! this doesn't work
                 // delete user.verification_token;
-                // res.send(user);
+                return res.send(user);
 
-                // note temp solution
-                // assign the key verification_token to verification_token and rest to userUser 
-                const { verification_token, ...newUser } = user;
-                res.send(newUser);
+                // note temp solution: it worked before now it doesnt
+                // assign the key verification_token to verification_token and rest to userUser
+                // const { verification_token, ...newUser } = user;
             })
             .catch((error) => {
-                next(error);
+                return next(error);
             });
 
         // note alternative method: remember to put async in function
@@ -57,6 +56,32 @@ export class UserController {
             next(error);
         }
         */
+    }
+
+    static async verifyEmail(req, res, next) {
+        const { email, verification_token } = req.body;
+        try {
+            const user = await userModel.findOneAndUpdate(
+                {
+                    email: email,
+                    verification_token: verification_token,
+                    verification_token_time: { $gt: Date.now() },
+                },
+                {
+                    email_verified: true,
+                },
+                {
+                    new: true,
+                }
+            );
+            if (user) {
+                res.send(user);
+            } else {
+                throw new Error("Email Verification token has expired");
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     // for test purposes only
