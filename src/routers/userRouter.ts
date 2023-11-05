@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController";
-import { validationResult } from "express-validator";
 import { UserValidator } from "../validators/userValidator";
 import { GlobalMiddleware } from "../middlewares/globalMiddleware";
 
@@ -38,13 +37,13 @@ class UserRouter {
     }
 
     putRoutes() {
-		this.router.patch(
-			"/verify-email",
-			UserValidator.emailValidator(),
+        this.router.patch(
+            "/verify-email",
+            UserValidator.emailValidator(),
             GlobalMiddleware.checkError,
-			UserController.verifyEmail
-		)
-	}
+            UserController.verifyEmail
+        );
+    }
 
     patchRoutes() {}
 

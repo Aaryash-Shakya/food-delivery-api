@@ -24,7 +24,7 @@ export class UserValidator {
     static emailValidator() {
         return [
             body("email", "Email is required").isEmail(),
-            body("token", "Token is required")
+            body("verification_token", "Token is required")
                 .isNumeric()
                 .isLength({ min: 6, max: 6 })
                 .withMessage("OTP must be have 6 digits"),

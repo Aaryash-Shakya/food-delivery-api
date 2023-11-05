@@ -1,5 +1,4 @@
 import userModel from "../models/userModel";
-import { validationResult } from "express-validator";
 import { Utils } from "../utils/utils";
 
 export class UserController {
@@ -27,12 +26,12 @@ export class UserController {
                 // todo: make a separate cluster for token then you can just send the token id without populating it
                 // ! this doesn't work
                 // delete user.verification_token;
-                // res.send(user);
+                res.send(user);
 
-                // note temp solution
+
+                // note temp solution: it worked before now it doesnt
                 // assign the key verification_token to verification_token and rest to userUser
-                const { verification_token, ...newUser } = user;
-                res.send(newUser);
+                // const { verification_token, ...newUser } = user;
             })
             .catch((error) => {
                 next(error);
@@ -49,8 +48,30 @@ export class UserController {
         */
     }
 
-    static verifyEmail(){
-
+    static async verifyEmail(req, res, next) {
+        const { email, verification_token } = req.body;
+        try {
+            const user = await userModel.findOneAndUpdate(
+                {
+                    email: email,
+                    verification_token: verification_token,
+                    verification_token_time: { $gt: Date.now() },
+                },
+                {
+                    email_verified: true,
+                },
+                {
+                    new: true,
+                }
+            );
+            if (user) {
+                res.send(user);
+            } else {
+                throw new Error("Email Verification token has expired");
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     // for test purposes only
