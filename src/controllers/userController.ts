@@ -4,17 +4,7 @@ import { Utils } from "../utils/utils";
 
 export class UserController {
     static signup(req, res, next) {
-        const errors = validationResult(req);
         const { name, email, password, phone, type, status } = req.body;
-        if (!errors.isEmpty()) {
-            next(new Error(errors.array()[0].msg));
-            // return (
-            //     res
-            //         .status(400)
-            //         // map is used to only show the msg property
-            //         .json({ errors: errors.array().map((x) => x.msg) })
-            // );
-        }
 
         const data = {
             name,
@@ -40,7 +30,7 @@ export class UserController {
                 // res.send(user);
 
                 // note temp solution
-                // assign the key verification_token to verification_token and rest to userUser 
+                // assign the key verification_token to verification_token and rest to userUser
                 const { verification_token, ...newUser } = user;
                 res.send(newUser);
             })
