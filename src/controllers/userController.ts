@@ -5,6 +5,18 @@ export class UserController {
     static signup(req, res, next) {
         const { name, email, password, phone, type, status } = req.body;
 
+        // check if email already exists
+        userModel
+            .findOne({ email: email })
+            .then((data) => {
+                if (data) {
+                    next(new Error("Email is already registered"));
+                }
+            })
+            .catch((err) => {
+                next(err);
+            });
+
         const data = {
             name,
             email,
@@ -27,7 +39,6 @@ export class UserController {
                 // ! this doesn't work
                 // delete user.verification_token;
                 res.send(user);
-
 
                 // note temp solution: it worked before now it doesnt
                 // assign the key verification_token to verification_token and rest to userUser
