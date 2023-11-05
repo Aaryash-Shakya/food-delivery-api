@@ -2,21 +2,21 @@ import userModel from "../models/userModel";
 import { Utils } from "../utils/utils";
 
 export class UserController {
-    static signup(req, res, next) {
+    static async signup(req, res, next) {
         const { name, email, password, phone, type, status } = req.body;
 
-        // check if email already exists
-        userModel
-            .findOne({ email: email })
-            .then((data) => {
-                if (data) {
-                    next(new Error("Email is already registered"));
-                }
-            })
-            .catch((err) => {
-                next(err);
-            });
+        // check conditions
+        try {
+            // check if email already exists
+            const existingUser = await userModel.findOne({ email: email });
+            if (existingUser) {
+                return next(new Error("Email is already registered"));
+            }
+        } catch (err) {
+            next(err);
+        }
 
+        // post user
         const data = {
             name,
             email,
@@ -30,7 +30,6 @@ export class UserController {
             type,
             status,
         };
-
         const user = new userModel(data);
         user.save()
             .then((user) => {
@@ -38,14 +37,14 @@ export class UserController {
                 // todo: make a separate cluster for token then you can just send the token id without populating it
                 // ! this doesn't work
                 // delete user.verification_token;
-                res.send(user);
+                return res.send(user);
 
                 // note temp solution: it worked before now it doesnt
                 // assign the key verification_token to verification_token and rest to userUser
                 // const { verification_token, ...newUser } = user;
             })
             .catch((error) => {
-                next(error);
+                return next(error);
             });
 
         // note alternative method: remember to put async in function
