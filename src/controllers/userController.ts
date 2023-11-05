@@ -37,6 +37,9 @@ export class UserController {
                 // todo: make a separate cluster for token then you can just send the token id without populating it
                 // ! this doesn't work
                 // delete user.verification_token;
+
+                // note think outside the box if you cant delete it then just override it
+                user.verification_token = null
                 return res.send(user);
 
                 // note temp solution: it worked before now it doesnt
