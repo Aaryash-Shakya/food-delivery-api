@@ -9,3 +9,29 @@ Welcome to the Food Delivery API, a backend service built with Node.js, Express,
 - **Menu Management:** Create and manage restaurant menus with items, prices, and descriptions. (coming soon)
 - **Order Management:** Allow users to place orders and track their delivery status. (coming soon)
 - **Real-time Updates:** Real-time updates on order status using WebSockets. (coming soon)
+
+## Installation
+
+Follow these steps to set up the Food Delivery API on your local development environment:
+
+1. Clone the repository:
+```sh
+git clone https://github.com/Aaryash-Shakya/food-delivery-api.git
+cd food-delivery-api
+```
+
+2. Install dependencies:
+```sh
+npm install
+```
+
+3. Set up environment variables:
+```sh
+
+```
+4. Start the API server:
+```sh
+npm start
+```
+
+The API should now be running locally on http://localhost:3000.
