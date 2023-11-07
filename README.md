@@ -15,23 +15,23 @@ Welcome to the Food Delivery API, a backend service built with Node.js, Express,
 Follow these steps to set up the Food Delivery API on your local development environment:
 
 1. Clone the repository:
-```sh
-git clone https://github.com/Aaryash-Shakya/food-delivery-api.git
-cd food-delivery-api
-```
+  ```sh
+  git clone https://github.com/Aaryash-Shakya/food-delivery-api.git
+  cd food-delivery-api
+  ```
 
 2. Install dependencies:
-```sh
-npm install
-```
+  ```sh
+  npm install
+  ```
 
 3. Set up environment variables:
-```sh
-
-```
+  ```sh
+  # I haven't figured it out yet
+  ```
 4. Start the API server:
-```sh
-npm start
-```
+  ```sh
+  npm start
+  ```
 
 The API should now be running locally on http://localhost:3000.
