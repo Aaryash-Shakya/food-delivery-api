@@ -5,6 +5,7 @@ Welcome to the Food Delivery API, a backend service built with Node.js, Express,
 ## Features
 
 - **User Authentication:** Secure user registration and login with JWT (JSON Web Tokens) for authentication.
+- **Email Verification:** Verify user email with noedmailer and mailtrap.
 - **Restaurant Management:** Add, update, and delete restaurant information. (coming soon)
 - **Menu Management:** Create and manage restaurant menus with items, prices, and descriptions. (coming soon)
 - **Order Management:** Allow users to place orders and track their delivery status. (coming soon)
