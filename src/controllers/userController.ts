@@ -1,4 +1,5 @@
 import userModel from "../models/userModel";
+import { sendEmail } from "../utils/nodeMailer";
 import { Utils } from "../utils/utils";
 
 export class UserController {
@@ -96,6 +97,7 @@ export class UserController {
 
     static test2(req, res) {
         console.log("test2");
-        res.send("test2");
+        res.send("email sent check mailtrap");
+        sendEmail()
     }
 }
