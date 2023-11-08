@@ -1,31 +1,42 @@
 import * as nodemailer from "nodemailer";
+import * as dotenv from "dotenv"
 
-const transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 587,
-    auth: {
-        user: process.env.NODEMAILER_USER,
-        pass: process.env.NODEMAILER_PASS,
-    },
-});
+dotenv.config()
+export class NodeMailer {
+    private static transporter: nodemailer.Transporter;
 
-// async..await is not allowed in global scope, must use a wrapper
-export async function sendEmail() {
-    // send mail with defined transport object
-    const info = await transporter.sendMail({
-        from: 'info@mailtrap.com', // sender address
-        to: "bar@example.com, baz@example.com", // list of receivers
-        subject: "First email test", // Subject line
-        text: "testing if the email works", // plain text body
-        // html: "<b>Hello world?</b>", // html body
-    });
+    private static initializeTransporter() {
+        console.log(process.env.NODEMAILER_USER);
 
-    console.log("Message sent: %s", info.messageId);
-    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+        NodeMailer.transporter = nodemailer.createTransport({
+            host: "sandbox.smtp.mailtrap.io",
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.NODEMAILER_USER,
+                pass: process.env.NODEMAILER_PASS,
+            },
+        });
+    }
 
-    //
-    // NOTE: You can go to https://forwardemail.net/my-account/emails to see your email delivery status and preview
-    //       Or you can use the "preview-email" npm package to preview emails locally in browsers and iOS Simulator
-    //       <https://github.com/forwardemail/preview-email>
-    //
+    
+    static async sendEmail(): Promise<void> {
+        if (!NodeMailer.transporter) {
+            NodeMailer.initializeTransporter();
+        }
+        try {
+            // send mail with defined transport object
+            const info = await NodeMailer.transporter.sendMail({
+                from: "info@mailtrap.com", // sender address
+                to: "bus@example.com, baz@example.com", // list of receivers
+                subject: "First email test", // Subject line
+                text: "testing if the email works", // plain text body
+                html: "<button>Click me</button>", // html body
+            });
+
+            console.log("Message sent: %s", info.messageId);
+        } catch (error) {
+            console.log("Error sending email:", error);
+        }
+    }
 }
