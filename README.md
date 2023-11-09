@@ -30,9 +30,59 @@ Follow these steps to set up the Food Delivery API on your local development env
   ```sh
   # I haven't figured it out yet
   ```
+
 4. Start the API server:
   ```sh
   npm start
   ```
 
 The API should now be running locally on http://localhost:3000.
+
+## Contributing
+We welcome contributions from the open-source community to enhance my api's features, functionality, and documentation. Feel free to fork this repository, create your own branch, and submit pull requests.
+
+### Make sure to follow the instruction below:
+
+1. **Fork this repository.**
+  Click on the fork button on the repository
+
+2. **Clone the repostory:**
+  Go to your forked repositry, Click on the code button and copy your repositroy's `(.git)` link.
+
+  clone the repository like this.
+
+   ```sh
+   git clone https://github.com/<your-username>/food-delivery-api.git
+   cd food-delivery-api
+   ```
+
+3. **Make a breanch and add your changes:**
+   In your local machine create a new branch
+   ```sh
+   git checkout -b <branch_name>
+   ```
+  Add your changes to the branch
+
+4. **Check the changed files**
+  ```sh
+  git status
+  ```
+
+5. **If all good, then Commit Your Changes**
+  ```sh
+  git add .
+  git commit -m "<EXPLAIN-YOUR_CHANGES>"
+  ```
+
+6. **Push to Your Forked Repository**
+  ```sh
+  git push -u origin <branch_name>
+  ```
+
+7. **Create a Pull Request**
+  Go to your forked repository on GitHub, and you should see a "Compare & pull request" button. Click on it to create a pull request (PR).
+
+  Create a pull request with a clear description of your changes.
+  
+  Your contribution will be reviewed, and upon approval, it will be merged into the main repository.
+
