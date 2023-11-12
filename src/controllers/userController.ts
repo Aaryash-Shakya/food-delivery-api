@@ -17,11 +17,13 @@ export class UserController {
             next(err);
         }
 
+        // generate verification OTP
+        let verification_token = Utils.generateOTP();
         // post user
         const data = {
             name,
             email,
-            verification_token: Utils.generateOTP(),
+            verification_token,
             verification_token_time: Utils.generateVerificationTime(
                 new Date(),
                 5
@@ -40,7 +42,17 @@ export class UserController {
                 // delete user.verification_token;
 
                 // note think outside the box if you cant delete it then just override it
-                user.verification_token = null
+                user.verification_token = null;
+
+                // send OPT in email
+                NodeMailer.sendEmail({
+                    from: "fooddelivery@api.com",
+                    to: user.email,
+                    subject: "Email Verification",
+                    text: `To verify your food delivery api account use the OTP ${verification_token}`,
+                    html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify</a>`,
+                });
+
                 return res.send(user);
 
                 // note temp solution: it worked before now it doesnt
@@ -98,6 +110,5 @@ export class UserController {
     static test2(req, res) {
         console.log("test2");
         res.send("email sent check mailtrap");
-        NodeMailer.sendEmail()
     }
 }
