@@ -77,11 +77,34 @@ export class UserController {
     static async verifyEmail(req, res, next) {
         const { email, verification_token } = req.body;
         try {
+            // todo learn mongodb conditional operators to check all conditions in a single query and update
+
+            // test conditions
+            const testUser = await userModel.findOne({
+                email: email,
+            });
+
+            // check if email is correct
+            if (!testUser) {
+                throw "Email hasn't been registered";
+            }
+
+            // check is email is already verified
+            if (testUser.email_verified) {
+                throw "Email is already verified";
+            }
+
+            // check if verification token has expired
+            else if (new Date() > testUser.verification_token_time) {
+                throw "Email verification token has expired";
+            }
+
+            // update user
             const user = await userModel.findOneAndUpdate(
                 {
                     email: email,
                     verification_token: verification_token,
-                    verification_token_time: { $gt: Date.now() },
+                    // verification_token_time: { $gt: Date.now() },
                 },
                 {
                     email_verified: true,
@@ -93,10 +116,11 @@ export class UserController {
             if (user) {
                 res.send(user);
             } else {
-                throw new Error("Email Verification token has expired");
+                throw "Invalid verification token";
             }
         } catch (err) {
             console.log(err);
+            next(err);
         }
     }
 
