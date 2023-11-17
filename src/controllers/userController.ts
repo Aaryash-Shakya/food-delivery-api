@@ -24,10 +24,7 @@ export class UserController {
             name,
             email,
             verification_token,
-            verification_token_time: Utils.generateVerificationTime(
-                new Date(),
-                5
-            ),
+            verification_token_time: Utils.generateVerificationTime(new Date(), 5),
             password,
             phone,
             type,
@@ -86,29 +83,29 @@ export class UserController {
 
             // check if email is correct
             if (!testUser) {
-                let err: Error = new Error("Email hasn't been registered");
-                (err as any).errorStatus = 404; // email not found
-                throw err;
+                Utils.createErrorAndThrow("Email not registered", 404); // email not found
             }
 
             // check is email is already verified
             if (testUser.email_verified) {
-                let err: Error = new Error("Email is already verified");
-                (err as any).errorStatus = 400; // bad request
-                throw err;
+                Utils.createErrorAndThrow("Email already verified", 400); // bad request
             }
 
             // check if verification token has expired
             else if (new Date() > testUser.verification_token_time) {
-                let err: Error = new Error("Email verification token has expired");
-                (err as any).errorStatus = 401; // unauthorized
-                throw err;
+                Utils.createErrorAndThrow("Email verification token expired", 401); // unauthorized
+            } 
+            
+            // check if verification token is correct
+            else if (verification_token !== testUser.verification_token) {
+                Utils.createErrorAndThrow("Invalid Verification Token", 401); // unauthorized
             }
 
             // update user
             const user = await userModel.findOneAndUpdate(
                 {
                     email: email,
+                    // use verification_token as well for extra security
                     verification_token: verification_token,
                     // verification_token_time: { $gt: Date.now() },
                 },
@@ -122,9 +119,7 @@ export class UserController {
             if (user) {
                 res.send(user);
             } else {
-                let err: Error = new Error("Invalid verification token");
-                (err as any).errorStatus = 400;
-                throw err;
+                Utils.createErrorAndThrow("Failed to update user", 500);
             }
         } catch (err) {
             next(err);
