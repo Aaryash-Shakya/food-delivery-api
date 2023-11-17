@@ -86,17 +86,23 @@ export class UserController {
 
             // check if email is correct
             if (!testUser) {
-                throw "Email hasn't been registered";
+                let err: Error = new Error("Email hasn't been registered");
+                (err as any).errorStatus = 404; // email not found
+                throw err;
             }
 
             // check is email is already verified
             if (testUser.email_verified) {
-                throw "Email is already verified";
+                let err: Error = new Error("Email is already verified");
+                (err as any).errorStatus = 400; // bad request
+                throw err;
             }
 
             // check if verification token has expired
             else if (new Date() > testUser.verification_token_time) {
-                throw "Email verification token has expired";
+                let err: Error = new Error("Email verification token has expired");
+                (err as any).errorStatus = 401; // unauthorized
+                throw err;
             }
 
             // update user
@@ -116,10 +122,11 @@ export class UserController {
             if (user) {
                 res.send(user);
             } else {
-                throw "Invalid verification token";
+                let err: Error = new Error("Invalid verification token");
+                (err as any).errorStatus = 400;
+                throw err;
             }
         } catch (err) {
-            console.log(err);
             next(err);
         }
     }
