@@ -81,7 +81,7 @@ export class UserController {
                 email: email,
             });
 
-            // check if email is correct
+            // check if email exists
             if (!testUser) {
                 Utils.createErrorAndThrow("Email not registered", 404); // email not found
             }
@@ -126,9 +126,51 @@ export class UserController {
         }
     }
 
-    static resendVerificationToken(req, res, next) {
+    static async resendVerificationToken(req, res, next) {
         const email = req.body.email;
-        res.send("resend token done");
+        try {
+            const testUser = await userModel.findOne({ email: email });
+
+            // test conditions
+            // check if email is correct
+            if (!testUser) {
+                Utils.createErrorAndThrow("Email not registered", 404); // email not found
+            }
+
+            // check if email is already verified
+            else if (testUser.email_verified === true) {
+                Utils.createErrorAndThrow("Email already verified", 400); // bad request
+            }
+
+            // generate new token and update time
+            const newVerificationToken = Utils.generateOTP();
+            const newVerificationTime = Utils.generateVerificationTime(new Date(), 5);
+
+            // update user
+            const updatedUser = await userModel.findOneAndUpdate(
+                { email: email },
+                {
+                    verification_token: newVerificationToken,
+                    verification_token_time: newVerificationTime,
+                },
+                {
+                    new: true,
+                }
+            );
+
+            // send OPT in email
+            NodeMailer.sendEmail({
+                from: "fooddelivery@api.com",
+                to: updatedUser.email,
+                subject: "Resend Email Verification",
+                text: `To verify your food delivery api account use the OTP ${updatedUser.verification_token}`,
+                html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify</a>`,
+            });
+
+            res.send("Verification email resent successfully");
+        } catch (err) {
+            next(err);
+        }
     }
 
     // for test purposes only
