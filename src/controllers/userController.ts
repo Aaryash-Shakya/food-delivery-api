@@ -94,8 +94,8 @@ export class UserController {
             // check if verification token has expired
             else if (new Date() > testUser.verification_token_time) {
                 Utils.createErrorAndThrow("Email verification token expired", 401); // unauthorized
-            } 
-            
+            }
+
             // check if verification token is correct
             else if (verification_token !== testUser.verification_token) {
                 Utils.createErrorAndThrow("Invalid Verification Token", 401); // unauthorized
@@ -124,6 +124,11 @@ export class UserController {
         } catch (err) {
             next(err);
         }
+    }
+
+    static resendVerificationToken(req, res, next) {
+        const email = req.body.email;
+        res.send("resend token done");
     }
 
     // for test purposes only
