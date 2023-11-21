@@ -2,6 +2,7 @@ import userModel from "../models/userModel";
 import { NodeMailer } from "../utils/nodeMailer";
 import { Utils } from "../utils/utils";
 import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 
 export class UserController {
     private static encryptPassword(myPlaintextPassword: string) {
@@ -19,6 +20,7 @@ export class UserController {
 
     static async signup(req, res, next) {
         let { name, email, password, phone, type, status } = req.body;
+        let hashed_password;
         try {
             // check conditions
             // check if email already exists
@@ -26,64 +28,44 @@ export class UserController {
             if (existingUser) {
                 Utils.createErrorAndThrow("Email is already registered", 409); // conflict
             }
-            password = await UserController.encryptPassword(password);
+            hashed_password = await UserController.encryptPassword(password);
+            // generate verification OTP
+            let verification_token = Utils.generateOTP();
+            // post user
+            const data = {
+                name,
+                email,
+                verification_token,
+                verification_token_time: Utils.generateVerificationTime(new Date(), 5),
+                password: hashed_password,
+                phone,
+                type,
+                status,
+            };
+            let user = new userModel(data);
+            user = await user.save();
+            // don't send token to frontend client
+            // todo: make a separate cluster for token then you can just send the token id without populating it
+            // ! this doesn't work -> delete user.verification_token;
+
+            // note think outside the box if you cant delete it then just override it
+            user.verification_token = null;
+
+            // send OPT in email
+            NodeMailer.sendEmail({
+                from: "fooddelivery@api.com",
+                to: user.email,
+                subject: "Email Verification",
+                text: `To verify your food delivery api account use the OTP ${verification_token}`,
+                html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify ${verification_token}</a>`,
+            });
+
+            // return res.status(200).json({ message: "Account Created. Verify your email." });
+            return res.send(user);
+
         } catch (err) {
             next(err);
         }
-
-        // generate verification OTP
-        let verification_token = Utils.generateOTP();
-        // post user
-        const data = {
-            name,
-            email,
-            verification_token,
-            verification_token_time: Utils.generateVerificationTime(new Date(), 5),
-            password,
-            phone,
-            type,
-            status,
-        };
-        const user = new userModel(data);
-        user.save()
-            .then((user) => {
-                // don't send token to frontend client
-                // todo: make a separate cluster for token then you can just send the token id without populating it
-                // ! this doesn't work
-                // delete user.verification_token;
-
-                // note think outside the box if you cant delete it then just override it
-                user.verification_token = null;
-
-                // send OPT in email
-                NodeMailer.sendEmail({
-                    from: "fooddelivery@api.com",
-                    to: user.email,
-                    subject: "Email Verification",
-                    text: `To verify your food delivery api account use the OTP ${verification_token}`,
-                    html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify ${verification_token}</a>`,
-                });
-
-                // return res.status(200).json({ message: "Account Created. Verify your email." });
-                return res.send(user)
-
-                // note temp solution: it worked before now it doesnt
-                // assign the key verification_token to verification_token and rest to userUser
-                // const { verification_token, ...newUser } = user;
-            })
-            .catch((error) => {
-                return next(error);
-            });
-
-        // note alternative method: remember to put async in function
-        /*
-        try {
-            const user = await userModel(data).save();
-            res.send(user);
-        } catch (error) {
-            next(error);
-        }
-        */
     }
 
     static async verifyEmail(req, res, next) {
