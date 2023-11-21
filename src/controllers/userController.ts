@@ -50,7 +50,7 @@ export class UserController {
                     html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify</a>`,
                 });
 
-                return res.send(user);
+                return res.status(200).json({ message: "Account Created. Verify your email." });
 
                 // note temp solution: it worked before now it doesnt
                 // assign the key verification_token to verification_token and rest to userUser
@@ -117,9 +117,9 @@ export class UserController {
                 }
             );
             if (user) {
-                res.send(user);
+                res.status(200).json({ message: "Your email has been verified successfully" });
             } else {
-                Utils.createErrorAndThrow("Failed to update user", 500);
+                Utils.createErrorAndThrow("Failed to verify user", 500);
             }
         } catch (err) {
             next(err);
@@ -159,7 +159,7 @@ export class UserController {
             );
 
             // send OPT in email
-            NodeMailer.sendEmail({
+            await NodeMailer.sendEmail({
                 from: "fooddelivery@api.com",
                 to: updatedUser.email,
                 subject: "Resend Email Verification",
@@ -167,7 +167,7 @@ export class UserController {
                 html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify</a>`,
             });
 
-            res.send("Verification email resent successfully");
+            return res.status(200).json({ message: "Verification email resent successfully" });
         } catch (err) {
             next(err);
         }
