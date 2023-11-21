@@ -4,8 +4,7 @@ import { Utils } from "../utils/utils";
 import * as bcrypt from "bcrypt";
 
 export class UserController {
-    private encryptPassword(req, res, next) {
-        const myPlaintextPassword: string = req.body.password;
+    private static encryptPassword(myPlaintextPassword: string) {
         const saltRounds: number = 10;
         return new Promise((resolve, reject) => {
             bcrypt.hash(myPlaintextPassword, saltRounds, (err, hash) => {
@@ -19,15 +18,15 @@ export class UserController {
     }
 
     static async signup(req, res, next) {
-        const { name, email, password, phone, type, status } = req.body;
-        
-        // check conditions
+        let { name, email, password, phone, type, status } = req.body;
         try {
+            // check conditions
             // check if email already exists
             const existingUser = await userModel.findOne({ email: email });
             if (existingUser) {
-                return next(new Error("Email is already registered"));
+                Utils.createErrorAndThrow("Email is already registered", 409); // conflict
             }
+            password = await UserController.encryptPassword(password);
         } catch (err) {
             next(err);
         }
@@ -62,10 +61,11 @@ export class UserController {
                     to: user.email,
                     subject: "Email Verification",
                     text: `To verify your food delivery api account use the OTP ${verification_token}`,
-                    html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify</a>`,
+                    html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify ${verification_token}</a>`,
                 });
 
-                return res.status(200).json({ message: "Account Created. Verify your email." });
+                // return res.status(200).json({ message: "Account Created. Verify your email." });
+                return res.send(user)
 
                 // note temp solution: it worked before now it doesnt
                 // assign the key verification_token to verification_token and rest to userUser
@@ -112,7 +112,7 @@ export class UserController {
             }
 
             // check if verification token is correct
-            else if (verification_token !== testUser.verification_token) {
+            else if (verification_token != testUser.verification_token) {
                 Utils.createErrorAndThrow("Invalid Verification Token", 401); // unauthorized
             }
 
@@ -179,7 +179,7 @@ export class UserController {
                 to: updatedUser.email,
                 subject: "Resend Email Verification",
                 text: `To verify your food delivery api account use the OTP ${updatedUser.verification_token}`,
-                html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify</a>`,
+                html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify ${updatedUser.verification_token}</a>`,
             });
 
             return res.status(200).json({ message: "Verification email resent successfully" });
