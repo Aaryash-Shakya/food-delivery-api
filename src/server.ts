@@ -53,13 +53,12 @@ export class Server {
 
     handleErrors() {
         this.app.use((error, req, res, next) => {
-            const errorStatus = (req as any).errorStatus || 500;
-            console.log(`error occurred: ${errorStatus}`);
+            const errorStatus = (error as any).errorStatus || 500;
+            const errorMessage = error.message || "Something went wrong. Please try again later";
+            console.log(`error occurred: ${error.errorStatus} ${error.message}`);
             res.status(errorStatus).json({
                 status: errorStatus,
-                message:
-                    error.message ||
-                    "Something went wrong. Please try again later",
+                message: errorMessage,
             });
         });
     }

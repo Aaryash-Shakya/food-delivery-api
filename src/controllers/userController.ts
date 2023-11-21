@@ -1,4 +1,5 @@
 import userModel from "../models/userModel";
+import { NodeMailer } from "../utils/nodeMailer";
 import { Utils } from "../utils/utils";
 
 export class UserController {
@@ -16,15 +17,14 @@ export class UserController {
             next(err);
         }
 
+        // generate verification OTP
+        let verification_token = Utils.generateOTP();
         // post user
         const data = {
             name,
             email,
-            verification_token: Utils.generateOTP(),
-            verification_token_time: Utils.generateVerificationTime(
-                new Date(),
-                5
-            ),
+            verification_token,
+            verification_token_time: Utils.generateVerificationTime(new Date(), 5),
             password,
             phone,
             type,
@@ -39,7 +39,17 @@ export class UserController {
                 // delete user.verification_token;
 
                 // note think outside the box if you cant delete it then just override it
-                user.verification_token = null
+                user.verification_token = null;
+
+                // send OPT in email
+                NodeMailer.sendEmail({
+                    from: "fooddelivery@api.com",
+                    to: user.email,
+                    subject: "Email Verification",
+                    text: `To verify your food delivery api account use the OTP ${verification_token}`,
+                    html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify</a>`,
+                });
+
                 return res.send(user);
 
                 // note temp solution: it worked before now it doesnt
@@ -64,11 +74,40 @@ export class UserController {
     static async verifyEmail(req, res, next) {
         const { email, verification_token } = req.body;
         try {
+            // todo learn mongodb conditional operators to check all conditions in a single query and update
+
+            // test conditions
+            const testUser = await userModel.findOne({
+                email: email,
+            });
+
+            // check if email exists
+            if (!testUser) {
+                Utils.createErrorAndThrow("Email not registered", 404); // email not found
+            }
+
+            // check is email is already verified
+            if (testUser.email_verified) {
+                Utils.createErrorAndThrow("Email already verified", 400); // bad request
+            }
+
+            // check if verification token has expired
+            else if (new Date() > testUser.verification_token_time) {
+                Utils.createErrorAndThrow("Email verification token expired", 401); // unauthorized
+            }
+
+            // check if verification token is correct
+            else if (verification_token !== testUser.verification_token) {
+                Utils.createErrorAndThrow("Invalid Verification Token", 401); // unauthorized
+            }
+
+            // update user
             const user = await userModel.findOneAndUpdate(
                 {
                     email: email,
+                    // use verification_token as well for extra security
                     verification_token: verification_token,
-                    verification_token_time: { $gt: Date.now() },
+                    // verification_token_time: { $gt: Date.now() },
                 },
                 {
                     email_verified: true,
@@ -80,10 +119,57 @@ export class UserController {
             if (user) {
                 res.send(user);
             } else {
-                throw new Error("Email Verification token has expired");
+                Utils.createErrorAndThrow("Failed to update user", 500);
             }
         } catch (err) {
-            console.log(err);
+            next(err);
+        }
+    }
+
+    static async resendVerificationToken(req, res, next) {
+        const email = req.body.email;
+        try {
+            const testUser = await userModel.findOne({ email: email });
+
+            // test conditions
+            // check if email is correct
+            if (!testUser) {
+                Utils.createErrorAndThrow("Email not registered", 404); // email not found
+            }
+
+            // check if email is already verified
+            else if (testUser.email_verified === true) {
+                Utils.createErrorAndThrow("Email already verified", 400); // bad request
+            }
+
+            // generate new token and update time
+            const newVerificationToken = Utils.generateOTP();
+            const newVerificationTime = Utils.generateVerificationTime(new Date(), 5);
+
+            // update user
+            const updatedUser = await userModel.findOneAndUpdate(
+                { email: email },
+                {
+                    verification_token: newVerificationToken,
+                    verification_token_time: newVerificationTime,
+                },
+                {
+                    new: true,
+                }
+            );
+
+            // send OPT in email
+            NodeMailer.sendEmail({
+                from: "fooddelivery@api.com",
+                to: updatedUser.email,
+                subject: "Resend Email Verification",
+                text: `To verify your food delivery api account use the OTP ${updatedUser.verification_token}`,
+                html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify</a>`,
+            });
+
+            res.send("Verification email resent successfully");
+        } catch (err) {
+            next(err);
         }
     }
 
@@ -96,6 +182,6 @@ export class UserController {
 
     static test2(req, res) {
         console.log("test2");
-        res.send("test2");
+        res.send("email sent check mailtrap");
     }
 }

@@ -21,7 +21,7 @@ export class UserValidator {
         ];
     }
 
-    static emailValidator() {
+    static verifyEmailValidator() {
         return [
             body("email", "Email is required").isEmail(),
             body("verification_token", "Token is required")
@@ -29,5 +29,9 @@ export class UserValidator {
                 .isLength({ min: 6, max: 6 })
                 .withMessage("OTP must be have 6 digits"),
         ];
+    }
+
+    static resendVerificationTokenValidator() {
+        return [body("email", "Email is required").isEmail()];
     }
 }

@@ -39,9 +39,15 @@ class UserRouter {
     putRoutes() {
         this.router.patch(
             "/verify-email",
-            UserValidator.emailValidator(),
+            UserValidator.verifyEmailValidator(),
             GlobalMiddleware.checkError,
             UserController.verifyEmail
+        );
+        this.router.patch(
+            "/resend-verification-token",
+            UserValidator.resendVerificationTokenValidator(),
+            GlobalMiddleware.checkError,
+            UserController.resendVerificationToken
         );
     }
 
