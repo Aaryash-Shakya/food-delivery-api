@@ -1,11 +1,26 @@
 import userModel from "../models/userModel";
 import { NodeMailer } from "../utils/nodeMailer";
 import { Utils } from "../utils/utils";
+import * as bcrypt from "bcrypt";
 
 export class UserController {
+    private encryptPassword(req, res, next) {
+        const myPlaintextPassword: string = req.body.password;
+        const saltRounds: number = 10;
+        return new Promise((resolve, reject) => {
+            bcrypt.hash(myPlaintextPassword, saltRounds, (err, hash) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(hash);
+                }
+            });
+        });
+    }
+
     static async signup(req, res, next) {
         const { name, email, password, phone, type, status } = req.body;
-
+        
         // check conditions
         try {
             // check if email already exists
