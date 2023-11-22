@@ -213,10 +213,9 @@ export class UserController {
     }
 
     // for test purposes only
-    static test1(req: any, res, next) {
+    static test1(req, res, next) {
         console.log("test1");
-        req.msg = "this is msg of test1";
-        next();
+        res.send(req.decoded)
     }
 
     static test2(req, res) {

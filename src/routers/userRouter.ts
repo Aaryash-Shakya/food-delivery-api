@@ -21,7 +21,7 @@ class UserRouter {
 
     getRoutes() {
         // for testing middleware
-        this.router.get("/test", UserController.test1, UserController.test2);
+        this.router.get("/test", GlobalMiddleware.authorization, UserController.test1);
 
         // alternative
         // this.router.get('/login',(req,res)=>UserController.login(req,res))

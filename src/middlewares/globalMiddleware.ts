@@ -1,4 +1,5 @@
 import { validationResult } from "express-validator";
+import { Jwt } from "../utils/jwt";
 
 export class GlobalMiddleware {
     static checkError(req, res, next) {
@@ -13,6 +14,26 @@ export class GlobalMiddleware {
             // );
         } else {
             next();
+        }
+    }
+
+    // static jwtVerify() {
+    //     return new Promise((resolve, reject) => {
+    //         jwt.verify(token, "shhhhh", function (err, decoded) {
+    //             console.log(decoded.foo); // bar
+    //         });
+    //     });
+    // }
+
+    static async authorization(req, res, next) {
+        const header_auth = req.headers.authorization;
+        const token = header_auth ? header_auth.slice(7) : null;
+        try {
+            const decoded = await Jwt.verifyJwt(token);
+            req.decoded = decoded;
+            next();
+        } catch (err) {
+            next(err);
         }
     }
 }

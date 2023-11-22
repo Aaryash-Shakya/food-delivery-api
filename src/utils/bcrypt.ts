@@ -15,7 +15,6 @@ export class Bcrypt {
     }
 
     static comparePassword(myPlaintextPassword: string, myHashedPassword: string): any {
-        const saltRounds: number = 10;
         return new Promise((resolve, reject) => {
             bcrypt.compare(myPlaintextPassword, myHashedPassword, (err, result) => {
                 if (err) {
