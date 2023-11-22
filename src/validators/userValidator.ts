@@ -1,4 +1,5 @@
-import { body } from "express-validator";
+// import { query } from "express";
+import { body, query } from "express-validator";
 
 export class UserValidator {
     static signupValidator() {
@@ -33,5 +34,12 @@ export class UserValidator {
 
     static resendVerificationTokenValidator() {
         return [body("email", "Email is required").isEmail()];
+    }
+
+    static loginValidator() {
+        return [
+            query("email", "Email is required").isEmail(),
+            query("password", "Password is required").isAlphanumeric(),
+        ];
     }
 }

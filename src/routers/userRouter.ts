@@ -25,6 +25,13 @@ class UserRouter {
 
         // alternative
         // this.router.get('/login',(req,res)=>UserController.login(req,res))
+
+        this.router.get(
+            "/login",
+            UserValidator.loginValidator(),
+            GlobalMiddleware.checkError,
+            UserController.login
+        );
     }
 
     postRoutes() {

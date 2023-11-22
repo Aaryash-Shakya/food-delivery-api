@@ -1,3 +1,5 @@
+import { check } from "express-validator";
+import { getEnvironmentVariables } from "../environments/environment";
 import userModel from "../models/userModel";
 import { NodeMailer } from "../utils/nodeMailer";
 import { Utils } from "../utils/utils";
@@ -13,6 +15,21 @@ export class UserController {
                     reject(err);
                 } else {
                     resolve(hash);
+                }
+            });
+        });
+    }
+
+    private static comparePassword(myPlaintextPassword: string, myHashedPassword: string): any {
+        const saltRounds: number = 10;
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(myPlaintextPassword, myHashedPassword, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else if (!result) {
+                    resolve("Username and password doesn't match");
+                } else {
+                    resolve(result);
                 }
             });
         });
@@ -44,6 +61,16 @@ export class UserController {
             };
             let user = new userModel(data);
             user = await user.save();
+
+            // create jwt token
+            const payload = {
+                userId: user._id,
+                email: user.email,
+            };
+            const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
+                expiresIn: "1h", // 1 hour
+            });
+
             // don't send token to frontend client
             // todo: make a separate cluster for token then you can just send the token id without populating it
             // ! this doesn't work -> delete user.verification_token;
@@ -60,9 +87,11 @@ export class UserController {
                 html: `<a href="https://localhost:3000/api/user/verify-email">Click to verify ${verification_token}</a>`,
             });
 
-            // return res.status(200).json({ message: "Account Created. Verify your email." });
-            return res.send(user);
-
+            return res.status(200).json({
+                message: "Account Created. Verify your email.",
+                token: token,
+                user: user,
+            });
         } catch (err) {
             next(err);
         }
@@ -175,6 +204,49 @@ export class UserController {
         console.log("test1");
         req.msg = "this is msg of test1";
         next();
+    }
+
+    static async login(req, res, next) {
+        const [email, password] = req.body;
+        try {
+            let user = await userModel.findOne({ email: email });
+
+            // test condition
+            // check if user exists
+            if (!user) {
+                Utils.createErrorAndThrow("Account not found", 404);
+            }
+
+            // check if user email is verified
+            if (!user.email_verified) {
+                Utils.createErrorAndThrow("Email not Verified", 401); // unauthorized
+            }
+
+            // check password is correct
+            const checkPassword = await UserController.comparePassword(password, user.password);
+            if(checkPassword !== true){
+                Utils.createErrorAndThrow(checkPassword,401); // forbidden
+            }
+
+            // generate new jwt token
+            const payload = {
+                userId: user._id,
+                email: user.email,
+            };
+            const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
+                expiresIn: "1h", // 1 hour
+            });
+
+            // send response
+            res.status(200).json({
+                message: "login in successful",
+                token: token,
+                user: user
+            })
+
+        } catch (err) {
+            next(err);
+        }
     }
 
     static test2(req, res) {
