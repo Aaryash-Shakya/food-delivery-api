@@ -1,40 +1,11 @@
-import { check } from "express-validator";
 import { getEnvironmentVariables } from "../environments/environment";
 import userModel from "../models/userModel";
 import { NodeMailer } from "../utils/nodeMailer";
 import { Utils } from "../utils/utils";
-import * as bcrypt from "bcrypt";
+import { Bcrypt } from "../utils/bcrypt";
 import * as jwt from "jsonwebtoken";
 
 export class UserController {
-    private static encryptPassword(myPlaintextPassword: string) {
-        const saltRounds: number = 10;
-        return new Promise((resolve, reject) => {
-            bcrypt.hash(myPlaintextPassword, saltRounds, (err, hash) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(hash);
-                }
-            });
-        });
-    }
-
-    private static comparePassword(myPlaintextPassword: string, myHashedPassword: string): any {
-        const saltRounds: number = 10;
-        return new Promise((resolve, reject) => {
-            bcrypt.compare(myPlaintextPassword, myHashedPassword, (err, result) => {
-                if (err) {
-                    reject(err);
-                } else if (!result) {
-                    resolve("Username and password doesn't match");
-                } else {
-                    resolve(true);
-                }
-            });
-        });
-    }
-
     static async signup(req, res, next) {
         let { name, email, password, phone, type, status } = req.body;
         let hashed_password;
@@ -45,7 +16,7 @@ export class UserController {
             if (existingUser) {
                 Utils.createErrorAndThrow("Email is already registered", 409); // conflict
             }
-            hashed_password = await UserController.encryptPassword(password);
+            hashed_password = await Bcrypt.encryptPassword(password);
             // generate verification OTP
             let verification_token = Utils.generateOTP();
             // post user
@@ -216,7 +187,7 @@ export class UserController {
             }
 
             // check password is correct
-            const checkPassword = await UserController.comparePassword(password, user.password);
+            const checkPassword = await Bcrypt.comparePassword(password, user.password);
             if (checkPassword !== true) {
                 Utils.createErrorAndThrow(checkPassword, 401); // forbidden
             }
