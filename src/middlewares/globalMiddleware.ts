@@ -17,14 +17,6 @@ export class GlobalMiddleware {
         }
     }
 
-    // static jwtVerify() {
-    //     return new Promise((resolve, reject) => {
-    //         jwt.verify(token, "shhhhh", function (err, decoded) {
-    //             console.log(decoded.foo); // bar
-    //         });
-    //     });
-    // }
-
     static async authorization(req, res, next) {
         const header_auth = req.headers.authorization;
         const token = header_auth ? header_auth.slice(7) : null;

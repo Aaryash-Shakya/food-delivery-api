@@ -20,7 +20,9 @@ export class Bcrypt {
                 if (err) {
                     reject(err);
                 } else if (!result) {
-                    resolve("Username and password doesn't match");
+                    let error = new Error("Username and password doesn't match");
+                    (error as any).errorStatus = 401;
+                    resolve(error);
                 } else {
                     resolve(true);
                 }
