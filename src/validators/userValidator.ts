@@ -38,8 +38,8 @@ export class UserValidator {
 
     static loginValidator() {
         return [
-            query("email", "Email is required").isEmail(),
-            query("password", "Password is required").isAlphanumeric(),
+            body("email", "Email is required").isEmail(),
+            body("password", "Password is required").isAlphanumeric(),
         ];
     }
 }

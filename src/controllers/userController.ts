@@ -29,7 +29,7 @@ export class UserController {
                 } else if (!result) {
                     resolve("Username and password doesn't match");
                 } else {
-                    resolve(result);
+                    resolve(true);
                 }
             });
         });
@@ -199,15 +199,8 @@ export class UserController {
         }
     }
 
-    // for test purposes only
-    static test1(req: any, res, next) {
-        console.log("test1");
-        req.msg = "this is msg of test1";
-        next();
-    }
-
     static async login(req, res, next) {
-        const [email, password] = req.body;
+        const { email, password } = req.body;
         try {
             let user = await userModel.findOne({ email: email });
 
@@ -224,8 +217,8 @@ export class UserController {
 
             // check password is correct
             const checkPassword = await UserController.comparePassword(password, user.password);
-            if(checkPassword !== true){
-                Utils.createErrorAndThrow(checkPassword,401); // forbidden
+            if (checkPassword !== true) {
+                Utils.createErrorAndThrow(checkPassword, 401); // forbidden
             }
 
             // generate new jwt token
@@ -239,14 +232,20 @@ export class UserController {
 
             // send response
             res.status(200).json({
-                message: "login in successful",
+                message: "login successful",
                 token: token,
-                user: user
-            })
-
+                user: user,
+            });
         } catch (err) {
             next(err);
         }
+    }
+
+    // for test purposes only
+    static test1(req: any, res, next) {
+        console.log("test1");
+        req.msg = "this is msg of test1";
+        next();
     }
 
     static test2(req, res) {

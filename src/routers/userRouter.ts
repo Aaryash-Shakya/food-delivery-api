@@ -25,13 +25,6 @@ class UserRouter {
 
         // alternative
         // this.router.get('/login',(req,res)=>UserController.login(req,res))
-
-        this.router.get(
-            "/login",
-            UserValidator.loginValidator(),
-            GlobalMiddleware.checkError,
-            UserController.login
-        );
     }
 
     postRoutes() {
@@ -41,9 +34,12 @@ class UserRouter {
             GlobalMiddleware.checkError,
             UserController.signup
         );
+        this.router.post("/login", UserValidator.loginValidator(), GlobalMiddleware.checkError, UserController.login);
     }
 
-    putRoutes() {
+    putRoutes() {}
+
+    patchRoutes() {
         this.router.patch(
             "/verify-email",
             UserValidator.verifyEmailValidator(),
@@ -57,8 +53,6 @@ class UserRouter {
             UserController.resendVerificationToken
         );
     }
-
-    patchRoutes() {}
 
     deleteRoutes() {}
 }
