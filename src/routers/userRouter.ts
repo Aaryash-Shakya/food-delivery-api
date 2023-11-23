@@ -35,6 +35,12 @@ class UserRouter {
             UserController.signup
         );
         this.router.post("/login", UserValidator.loginValidator(), GlobalMiddleware.checkError, UserController.login);
+        this.router.post(
+            "/forgot-password",
+            UserValidator.forgotPasswordValidator(),
+            GlobalMiddleware.checkError,
+            UserController.forgotPassword
+        );
     }
 
     putRoutes() {}

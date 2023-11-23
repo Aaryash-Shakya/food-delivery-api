@@ -42,4 +42,8 @@ export class UserValidator {
             body("password", "Password is required").isAlphanumeric(),
         ];
     }
+
+    static forgotPasswordValidator() {
+        return [body("email", "Email is required").isEmail()];
+    }
 }

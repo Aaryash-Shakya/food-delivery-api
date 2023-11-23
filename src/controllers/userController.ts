@@ -26,6 +26,8 @@ export class UserController {
                 verification_token,
                 verification_token_time: Utils.generateVerificationTime(new Date(), 5),
                 password: hashed_password,
+                password_reset_token: -1, // -1 -> not generated
+                password_reset_token_time: Utils.generateVerificationTime(new Date(), -10), // always expired: 10 min before creating the account
                 phone,
                 type,
                 status,
@@ -205,7 +207,51 @@ export class UserController {
             res.status(200).json({
                 message: "login successful",
                 token: token,
-                user: user,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    static async forgotPassword(req, res, next) {
+        const email = req.body.email;
+        try {
+            const testUser = await userModel.findOne({ email: email });
+
+            // test conditions
+            // check if user exist
+            if (!testUser) {
+                Utils.createErrorAndThrow("Email not registered", 404); // email not found
+            }
+            // check if email is verified
+            else if (!testUser.email_verified) {
+                Utils.createErrorAndThrow("Email not verified", 401); // unauthorized
+            }
+
+            // update token
+            const passwordResetToken = Utils.generateOTP();
+            const passwordResetTokenTime = Utils.generateVerificationTime(new Date(), 5);
+
+            const updatedUser = await userModel.findOneAndUpdate(
+                { email: email },
+                {
+                    password_reset_token: passwordResetToken,
+                    password_reset_token_time: passwordResetTokenTime,
+                }
+            );
+
+            // generate jwt to verify device during reset
+            const payload = {
+                userId: updatedUser._id,
+                email: updatedUser.email,
+            };
+            const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
+                expiresIn: "5m", // 1 hour
+            });
+
+            res.status(200).json({
+                message: "Password reset OTP has been sent",
+                token: token,
             });
         } catch (err) {
             next(err);
@@ -215,7 +261,7 @@ export class UserController {
     // for test purposes only
     static test1(req, res, next) {
         console.log("test1");
-        res.send(req.decoded)
+        res.send(req.decoded);
     }
 
     static test2(req, res) {
