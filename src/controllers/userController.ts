@@ -240,6 +240,15 @@ export class UserController {
                 }
             );
 
+            // send password reset otp in email
+            NodeMailer.sendEmail({
+                from: "fooddelivery@api.com",
+                to: updatedUser.email,
+                subject: "Reset Account Password",
+                text: `To reset your password for food delivery api account use the OTP ${passwordResetToken}`,
+                html: `<a href="https://localhost:3000/api/user/reset-password">Click to verify ${passwordResetToken}</a>`,
+            });
+
             // generate jwt to verify device during reset
             const payload = {
                 userId: updatedUser._id,

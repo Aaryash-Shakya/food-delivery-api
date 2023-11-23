@@ -66,7 +66,7 @@ export class Server {
             } 
             // Handle bcrypt errors
             else if (error.name === "BcryptError") {
-                errorStatus = 500; // Adjust based on your specific use case
+                errorStatus = 500;
             }
 
             console.log(`error occurred: ${error.name} ${error.errorStatus} ${error.message}`);
