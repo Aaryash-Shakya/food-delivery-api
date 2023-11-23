@@ -264,8 +264,14 @@ export class UserController {
         res.send(req.decoded);
     }
 
-    static test2(req, res) {
+    static async test2(req, res, next) {
         console.log("test2");
-        res.send("email sent check mailtrap");
+        try {
+            const fakeUser = await userModel.findOne({ email: 123 });
+            console.log(fakeUser)
+            res.send('success')
+        } catch (err) {
+            next(err);
+        }
     }
 }
