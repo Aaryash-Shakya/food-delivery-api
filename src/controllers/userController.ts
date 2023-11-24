@@ -237,6 +237,9 @@ export class UserController {
                 {
                     password_reset_token: passwordResetToken,
                     password_reset_token_time: passwordResetTokenTime,
+                },
+                {
+                    new: true,
                 }
             );
 
@@ -270,46 +273,70 @@ export class UserController {
 
     static async resetPassword(req, res, next) {
         const { email, password, password_reset_token } = req.body;
+        // from GlobalMiddleware.authorization
+        const decoded = req.decoded;
         try {
+            // test conditions
+            // check if jwt exists
+            if (!decoded) {
+                Utils.createErrorAndThrow("JsonWebToken not found", 404); // jwt not found
+            }
+
+            // check if jwt is correct
+            else if (decoded.email !== email) {
+                Utils.createErrorAndThrow("Invalid JsonWebToken", 401); // unauthorized
+            }
+
             const testUser = await userModel.findOne({
                 email: email,
             });
 
-            // test conditions
             // check if email exists
             if (!testUser) {
                 Utils.createErrorAndThrow("Email not registered", 404); // email not found
             }
 
-            // check is email is already verified
+            // check is email is verified
             if (!testUser.email_verified) {
                 Utils.createErrorAndThrow("Email not verified", 401); // unauthorized
             }
 
-            // check if verification token has expired
+            // check if password reset token has expired
             else if (new Date() > testUser.password_reset_token_time) {
                 Utils.createErrorAndThrow("Password reset token expired", 401); // unauthorized
             }
 
-            // check if verification token is correct
-            else if (password_reset_token != testUser.verification_token) {
+            // check if password reset OTP hasn't been requested
+            else if (password_reset_token === -1) {
+                Utils.createErrorAndThrow("Password reset token not generated", 400); // bad request
+            }
+
+            // check if password reset token is correct
+            else if (password_reset_token != testUser.password_reset_token) {
                 Utils.createErrorAndThrow("Invalid password reset token", 401); // unauthorized
             }
 
             // generate hashed password
             const hashed_password = await Bcrypt.encryptPassword(password);
 
-            const updatedUser = userModel.findOneAndUpdate(
-                { email: email },
+            const updatedUser = await userModel.findOneAndUpdate(
+                {
+                    email: email,
+                    password_reset_token: password_reset_token,
+                },
                 {
                     password: hashed_password,
-                    password_verification_token: -1,
-                    password_verification_token_time: Utils.generateVerificationTime(new Date(), -10),
+                    password_reset_token: -1,
+                    password_reset_token_time: Utils.generateVerificationTime(new Date(), -10),
                 },
                 {
                     new: true,
                 }
             );
+
+            res.status(200).json({
+                message: "Password reset successful",
+            });
         } catch (err) {
             next(err);
         }

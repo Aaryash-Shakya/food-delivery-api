@@ -63,6 +63,7 @@ class UserRouter {
             "/reset-password",
             UserValidator.resetPasswordValidator(),
             GlobalMiddleware.checkError,
+            GlobalMiddleware.authorization,
             UserController.resetPassword
         );
     }
