@@ -49,10 +49,10 @@ export class UserController {
             // ! this doesn't work -> delete user.verification_token;
 
             // note think outside the box if you cant delete it then just override it
-            user.verification_token = null;
+            // user.verification_token = null;
 
             // send OPT in email
-            NodeMailer.sendEmail({
+            await NodeMailer.sendEmail({
                 from: "fooddelivery@api.com",
                 to: user.email,
                 subject: "Email Verification",
@@ -241,7 +241,7 @@ export class UserController {
             );
 
             // send password reset otp in email
-            NodeMailer.sendEmail({
+            await NodeMailer.sendEmail({
                 from: "fooddelivery@api.com",
                 to: updatedUser.email,
                 subject: "Reset Account Password",
@@ -255,13 +255,61 @@ export class UserController {
                 email: updatedUser.email,
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
-                expiresIn: "5m", // 1 hour
+                expiresIn: "5m", // 5 min
             });
 
             res.status(200).json({
                 message: "Password reset OTP has been sent",
                 token: token,
+                user: updatedUser,
             });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    static async resetPassword(req, res, next) {
+        const { email, password, password_reset_token } = req.body;
+        try {
+            const testUser = await userModel.findOne({
+                email: email,
+            });
+
+            // test conditions
+            // check if email exists
+            if (!testUser) {
+                Utils.createErrorAndThrow("Email not registered", 404); // email not found
+            }
+
+            // check is email is already verified
+            if (!testUser.email_verified) {
+                Utils.createErrorAndThrow("Email not verified", 401); // unauthorized
+            }
+
+            // check if verification token has expired
+            else if (new Date() > testUser.password_reset_token_time) {
+                Utils.createErrorAndThrow("Password reset token expired", 401); // unauthorized
+            }
+
+            // check if verification token is correct
+            else if (password_reset_token != testUser.verification_token) {
+                Utils.createErrorAndThrow("Invalid password reset token", 401); // unauthorized
+            }
+
+            // generate hashed password
+            const hashed_password = await Bcrypt.encryptPassword(password);
+
+            const updatedUser = userModel.findOneAndUpdate(
+                { email: email },
+                {
+                    password: hashed_password,
+                    password_verification_token: -1,
+                    password_verification_token_time: Utils.generateVerificationTime(new Date(), -10),
+                },
+                {
+                    new: true,
+                }
+            );
         } catch (err) {
             next(err);
         }
@@ -277,8 +325,8 @@ export class UserController {
         console.log("test2");
         try {
             const fakeUser = await userModel.findOne({ email: 123 });
-            console.log(fakeUser)
-            res.send('success')
+            console.log(fakeUser);
+            res.send("success");
         } catch (err) {
             next(err);
         }

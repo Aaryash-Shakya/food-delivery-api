@@ -59,6 +59,12 @@ class UserRouter {
             GlobalMiddleware.checkError,
             UserController.resendVerificationToken
         );
+        this.router.patch(
+            "/reset-password",
+            UserValidator.resetPasswordValidator(),
+            GlobalMiddleware.checkError,
+            UserController.resetPassword
+        );
     }
 
     deleteRoutes() {}
