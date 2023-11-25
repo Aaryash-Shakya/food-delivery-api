@@ -46,7 +46,15 @@ class UserRouter {
         );
     }
 
-    putRoutes() {}
+    putRoutes() {
+        this.router.put(
+            "/update-profile",
+            GlobalMiddleware.authorization,
+            UserValidator.updateProfileValidator(),
+            GlobalMiddleware.checkError,
+            UserController.updateProfile
+        );
+    }
 
     patchRoutes() {
         this.router.patch(

@@ -201,7 +201,7 @@ export class UserController {
                 email: user.email,
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
-                expiresIn: "1h", // 1 hour
+                expiresIn: "1d", // 1 day
                 issuer: "fooddelivery@api.com",
             });
 
@@ -387,6 +387,55 @@ export class UserController {
             res.status(200).json({
                 message: "Fetch user successful",
                 profile: user,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    static async updateProfile(req, res, next) {
+        const { email, name, phone, type } = req.body;
+        const decoded = req.decoded;
+        try {
+            // test conditions
+            // check if jwt exists
+            if (!decoded) {
+                Utils.createErrorAndThrow("JsonWebToken not found", 404); // jwt not found
+            }
+
+            // check if jwt is correct
+            else if (decoded.email !== email) {
+                Utils.createErrorAndThrow("Invalid JsonWebToken", 401); // unauthorized
+            }
+
+            const testUser = await userModel.findOne({
+                email: email,
+            });
+
+            // check if email exists
+            if (!testUser) {
+                Utils.createErrorAndThrow("Email not registered", 404); // email not found
+            }
+
+            // check is email is verified
+            if (!testUser.email_verified) {
+                Utils.createErrorAndThrow("Email not verified", 401); // unauthorized
+            }
+
+            // update
+            let newData: { name?: string; phone?: string; type?: string } = {};
+            if (name !== undefined) {
+                newData.name = name;
+            }
+            if (phone !== undefined) {
+                newData.phone = phone;
+            }
+            if (type !== undefined) {
+                newData.type = type;
+            }
+            await userModel.findOneAndUpdate({ email: email }, newData);
+            res.status(200).json({
+                message: "Profile update successfully",
             });
         } catch (err) {
             next(err);

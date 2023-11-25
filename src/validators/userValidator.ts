@@ -53,4 +53,13 @@ export class UserValidator {
             body("password_reset_token", "Password reset OTP is required").isNumeric(),
         ];
     }
+
+    static updateProfileValidator() {
+        return [
+            body("email", "Email is required").isEmail(),
+            body("name").optional().isString(),
+            body("phone").optional().isString(),
+            body("type").optional().isString(),
+        ];
+    }
 }
