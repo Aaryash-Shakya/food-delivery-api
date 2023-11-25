@@ -42,6 +42,7 @@ export class UserController {
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "1h", // 1 hour
+                issuer: "fooddelivery@api.com"
             });
 
             // don't send token to frontend client
@@ -201,6 +202,7 @@ export class UserController {
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "1h", // 1 hour
+                issuer: "fooddelivery@api.com"
             });
 
             // send response
@@ -259,6 +261,7 @@ export class UserController {
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "5m", // 5 min
+                issuer: "fooddelivery@api.com"
             });
 
             res.status(200).json({

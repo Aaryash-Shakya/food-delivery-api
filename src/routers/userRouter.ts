@@ -61,9 +61,9 @@ class UserRouter {
         );
         this.router.patch(
             "/reset-password",
+            GlobalMiddleware.authorization,
             UserValidator.resetPasswordValidator(),
             GlobalMiddleware.checkError,
-            GlobalMiddleware.authorization,
             UserController.resetPassword
         );
     }
