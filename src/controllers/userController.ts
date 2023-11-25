@@ -42,7 +42,7 @@ export class UserController {
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "1h", // 1 hour
-                issuer: "fooddelivery@api.com"
+                issuer: "fooddelivery@api.com",
             });
 
             // don't send token to frontend client
@@ -202,7 +202,7 @@ export class UserController {
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "1h", // 1 hour
-                issuer: "fooddelivery@api.com"
+                issuer: "fooddelivery@api.com",
             });
 
             // send response
@@ -261,7 +261,7 @@ export class UserController {
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "5m", // 5 min
-                issuer: "fooddelivery@api.com"
+                issuer: "fooddelivery@api.com",
             });
 
             res.status(200).json({
@@ -339,6 +339,54 @@ export class UserController {
 
             res.status(200).json({
                 message: "Password reset successful",
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    static async getProfile(req, res, next) {
+        const decoded = req.decoded;
+        const email = req.params.email;
+        try {
+            // test conditions
+            // check if jwt exists
+            if (!decoded) {
+                Utils.createErrorAndThrow("JsonWebToken not found", 404); // jwt not found
+            }
+
+            // check if jwt is correct
+            else if (decoded.email !== email) {
+                Utils.createErrorAndThrow("Invalid JsonWebToken", 401); // unauthorized
+            }
+
+            const testUser = await userModel.findOne({
+                email: email,
+            });
+
+            // check if email exists
+            if (!testUser) {
+                Utils.createErrorAndThrow("Email not registered", 404); // email not found
+            }
+
+            // check is email is verified
+            if (!testUser.email_verified) {
+                Utils.createErrorAndThrow("Email not verified", 401); // unauthorized
+            }
+
+            // only send necessary data
+            const user = {
+                name: testUser.name,
+                email: testUser.email,
+                phone: testUser.phone,
+                type: testUser.type,
+                status: testUser.status,
+                createdAt: testUser.createdAt,
+            };
+
+            res.status(200).json({
+                message: "Fetch user successful",
+                profile: user,
             });
         } catch (err) {
             next(err);

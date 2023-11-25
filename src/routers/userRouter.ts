@@ -20,6 +20,8 @@ class UserRouter {
     }
 
     getRoutes() {
+        this.router.get("/get-profile/:email", GlobalMiddleware.authorization, UserController.getProfile);
+
         // for testing middleware
         this.router.get("/test", GlobalMiddleware.authorization, UserController.test1);
         this.router.get("/test2", UserController.test2);
