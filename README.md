@@ -1,6 +1,13 @@
-# Food Delivery API (Node.js, Express, TypeScript)
+# Food Delivery API
 
-Welcome to the Food Delivery API, a backend service built with Node.js, Express, and TypeScript for managing food delivery orders. This API provides a robust platform for handling food orders, user authentication, and restaurant management. Whether you're a restaurant owner or a developer looking to integrate food delivery functionality into your application, this API is a great starting point.
+Welcome to the Food Delivery API, a complete backend service for a food delivery system. This API provides a robust platform for handling food orders, user authentication, and restaurant management. Whether you're a restaurant owner or a developer looking to integrate food delivery functionality into your application, this API is a great starting point.
+
+## <img src="https://cdn.iconscout.com/icon/free/png-256/free-layers-94-675757.png?f=webp" height=32 width=32> Tech Stack
+
+- <img src="https://img.shields.io/badge/-TypeScript-555?logo=typescript" height=30> 
+- <img src="https://img.shields.io/badge/-Node.js-555?logo=node.js" height=30> 
+- <img src="https://img.shields.io/badge/-Express-555?logo=express" height=30> 
+- <img src="https://img.shields.io/badge/-MongoDB-555?logo=mongodb" height=30> 
 
 ## 💡Features
 
