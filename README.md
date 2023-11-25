@@ -27,17 +27,30 @@ Follow these steps to set up the Food Delivery API on your local development env
   ```
 
 3. Set up environment variables:
-    For databsae
-      Login/Signup for your mongodb account
-      create folder environments with with environment.ts which exports ur db_uri which you can find in your mongodb account.
-      For detailed instruction [click me](https://www.mongodb.com/docs/v2.2/reference/connection-string/)
-  
-    For mail testing
-      Create a mailtrap account
-      In .env folder add NODEMAILER_USER and NODEMAILER_PASS with the value in your account.
-      For detailed instruction [click me](https://mailtrap.io/blog/setup-smtp-server/)
+  For **databsae**
+    Create a folder environments with environment.ts and past the code below.
+    ```
+    export function getEnvironmentVariables() {
+      return {
+        db_uri: <insert_string>;
+        jwt_secret_key: <insert_string>;
+      }
+    }
+    ```
+    For db_uri create/login to your mongodb account and create new cluster and go to connect > connect with mongodb driver for node.js 
+    For detailed instruction [click me](https://www.mongodb.com/languages/javascript/mongodb-and-npm-tutorial)
+    For video tutorial [click me](https://youtu.be/LTKgKt_t1JE?si=TVOShixJm1_Zw3cL)
 
-4. Start the API server:
+  For **mail testing**
+    Create .env folder add NODEMAILER_USER and NODEMAILER_PASS with the value in your account.
+    ```
+    NODEMAILER_USER = "get from your account"
+    NODEMAILER_PASS = "get from yout account"
+    ```
+    Create/login to your mailtrap account go to email testing > my inbox > SMTP setting > show credentials
+    For detailed instruction [click me](https://help.mailtrap.io/article/5-testing-integration)
+
+5. Start the API server:
   ```sh
   npm start
   ```
