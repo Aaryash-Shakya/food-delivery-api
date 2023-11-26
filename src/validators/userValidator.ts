@@ -1,4 +1,5 @@
-import { body } from "express-validator";
+// import { query } from "express";
+import { body, query } from "express-validator";
 
 export class UserValidator {
     static signupValidator() {
@@ -33,5 +34,32 @@ export class UserValidator {
 
     static resendVerificationTokenValidator() {
         return [body("email", "Email is required").isEmail()];
+    }
+
+    static loginValidator() {
+        return [
+            body("email", "Email is required").isEmail(),
+            body("password", "Password is required").isAlphanumeric(),
+        ];
+    }
+
+    static forgotPasswordValidator() {
+        return [body("email", "Email is required").isEmail()];
+    }
+
+    static resetPasswordValidator() {
+        return [
+            body("email", "Email is required").isEmail(),
+            body("password_reset_token", "Password reset OTP is required").isNumeric(),
+        ];
+    }
+
+    static updateProfileValidator() {
+        return [
+            body("email", "Email is required").isEmail(),
+            body("name").optional().isString(),
+            body("phone").optional().isString(),
+            body("type").optional().isString(),
+        ];
     }
 }

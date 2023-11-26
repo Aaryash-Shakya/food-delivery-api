@@ -53,10 +53,26 @@ export class Server {
 
     handleErrors() {
         this.app.use((error, req, res, next) => {
-            const errorStatus = (error as any).errorStatus || 500;
-            const errorMessage = error.message || "Something went wrong. Please try again later";
-            console.log(`error occurred: ${error.errorStatus} ${error.message}`);
+            let errorStatus = (error as any).errorStatus || 500;
+            let errorMessage = error.message || "Something went wrong. Please try again later";
+
+            // Handle MongoDB errors
+            if (error.name === "MongoError") {
+                errorStatus = 500;
+            } 
+            // Handle JWT errors
+            else if (error.name === "JsonWebTokenError") {
+                errorStatus = 500;
+            } 
+            // Handle bcrypt errors
+            else if (error.name === "BcryptError") {
+                errorStatus = 500;
+            }
+
+            console.log(`error occurred: ${error.name} ${error.errorStatus} ${error.message}`);
+            console.log(error);
             res.status(errorStatus).json({
+                errorName: error.name,
                 status: errorStatus,
                 message: errorMessage,
             });

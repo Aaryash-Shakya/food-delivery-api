@@ -20,8 +20,11 @@ class UserRouter {
     }
 
     getRoutes() {
+        this.router.get("/get-profile/:email", GlobalMiddleware.authorization, UserController.getProfile);
+
         // for testing middleware
-        this.router.get("/test", UserController.test1, UserController.test2);
+        this.router.get("/test", GlobalMiddleware.authorization, UserController.test1);
+        this.router.get("/test2", UserController.test2);
 
         // alternative
         // this.router.get('/login',(req,res)=>UserController.login(req,res))
@@ -34,9 +37,26 @@ class UserRouter {
             GlobalMiddleware.checkError,
             UserController.signup
         );
+        this.router.post("/login", UserValidator.loginValidator(), GlobalMiddleware.checkError, UserController.login);
+        this.router.post(
+            "/forgot-password",
+            UserValidator.forgotPasswordValidator(),
+            GlobalMiddleware.checkError,
+            UserController.forgotPassword
+        );
     }
 
     putRoutes() {
+        this.router.put(
+            "/update-profile",
+            GlobalMiddleware.authorization,
+            UserValidator.updateProfileValidator(),
+            GlobalMiddleware.checkError,
+            UserController.updateProfile
+        );
+    }
+
+    patchRoutes() {
         this.router.patch(
             "/verify-email",
             UserValidator.verifyEmailValidator(),
@@ -49,9 +69,14 @@ class UserRouter {
             GlobalMiddleware.checkError,
             UserController.resendVerificationToken
         );
+        this.router.patch(
+            "/reset-password",
+            GlobalMiddleware.authorization,
+            UserValidator.resetPasswordValidator(),
+            GlobalMiddleware.checkError,
+            UserController.resetPassword
+        );
     }
-
-    patchRoutes() {}
 
     deleteRoutes() {}
 }

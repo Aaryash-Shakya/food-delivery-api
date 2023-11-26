@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        password_reset_token: {
+            type: Number,
+            required: true,
+        },
+        password_reset_token_time: {
+            type: Date,
+            required: true,
+        },
         phone: {
             type: String,
             required: true,
