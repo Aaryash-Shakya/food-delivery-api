@@ -39,6 +39,7 @@ export class UserController {
             const payload = {
                 userId: user._id,
                 email: user.email,
+                type: user.type
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "1h", // 1 hour
@@ -199,6 +200,7 @@ export class UserController {
             const payload = {
                 userId: user._id,
                 email: user.email,
+                type: user.type,
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "1d", // 1 day
@@ -258,6 +260,7 @@ export class UserController {
             const payload = {
                 userId: updatedUser._id,
                 email: updatedUser.email,
+                type: updatedUser.type,
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "5m", // 5 min
