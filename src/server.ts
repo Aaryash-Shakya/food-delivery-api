@@ -40,7 +40,9 @@ export class Server {
     }
 
     setRoutes() {
-        this.app.use("/src/uploads", express.static("src/uploads"));
+        // this.app.use("/src/uploads", express.static("src/uploads"));
+        this.app.use("/public/uploads", express.static("public/uploads"));
+        this.app.use("/public//uploads", express.static("public/uploads"));
         this.app.use("/api/user", userRouter);
         this.app.use("/api/banner", bannerRouter);
     }

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { GlobalMiddleware } from "../middlewares/globalMiddleware";
 import { BannerValidator } from "../validators/bannerValidator";
 import { BannerController } from "../controllers/bannerController";
+import { Multer } from "../utils/multer";
 
 class BannerRouter {
     public router: Router;
@@ -21,6 +22,7 @@ class BannerRouter {
             "/add-banner",
             GlobalMiddleware.authorization,
             GlobalMiddleware.checkTypeAdmin,
+            new Multer().pMulter.single("banner"),
             BannerValidator.addBannerValidator(),
             GlobalMiddleware.checkError,
             BannerController.addBanner

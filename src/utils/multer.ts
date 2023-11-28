@@ -3,23 +3,23 @@ import { Utils } from "./utils";
 
 const storageOptions = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, "./src/uploads");
+        // callback(null, "./src/uploads");
+        callback(null, "./public/uploads");
     },
     filename: (req, file, callback) => {
         const randomNumber = Utils.generateOTP();
-        const uniqueSuffix = Date.now() + "-" + randomNumber;
-        callback(null, file.originalname + uniqueSuffix);
+        const uniquePrefix = Date.now() + "-" + randomNumber;
+        callback(null, uniquePrefix + file.originalname);
     },
 });
 
-const fileFilter = (req,file,cb)=>{
-    if(file.mimetype ==='image/jpeg' || file.mimetype ==='image/png'){
-        cb(null,true);
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+        cb(null, true);
+    } else {
+        cb(null, false);
     }
-    else{
-        cb(null,false);
-    }
-}
+};
 
 export class Multer {
     public pMulter = multer({ storage: storageOptions, fileFilter: fileFilter });
