@@ -2,6 +2,7 @@ import * as express from "express";
 import * as mongoose from "mongoose";
 import { getEnvironmentVariables } from "./environments/environment";
 import userRouter from "./routers/userRouter";
+import bannerRouter from "./routers/bannerRouter";
 import * as bodyParser from "body-parser";
 
 export class Server {
@@ -39,7 +40,9 @@ export class Server {
     }
 
     setRoutes() {
+        this.app.use("/src/uploads", express.static("src/uploads"));
         this.app.use("/api/user", userRouter);
+        this.app.use("/api/banner", bannerRouter);
     }
 
     handle404Error() {
@@ -59,11 +62,11 @@ export class Server {
             // Handle MongoDB errors
             if (error.name === "MongoError") {
                 errorStatus = 500;
-            } 
+            }
             // Handle JWT errors
             else if (error.name === "JsonWebTokenError") {
                 errorStatus = 500;
-            } 
+            }
             // Handle bcrypt errors
             else if (error.name === "BcryptError") {
                 errorStatus = 500;
