@@ -1,5 +1,6 @@
 import { validationResult } from "express-validator";
 import { Jwt } from "../utils/jwt";
+import { Utils } from "../utils/utils";
 
 export class GlobalMiddleware {
     static checkError(req, res, next) {
@@ -26,6 +27,18 @@ export class GlobalMiddleware {
         try {
             const decoded = await Jwt.verifyJwt(token);
             req.decoded = decoded;
+            next();
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    static checkTypeAdmin(req, res, next) {
+        const userType = req.decoded.type;
+        try {
+            if (userType !== "admin") {
+                Utils.createErrorAndThrow("Unauthorized user", 401);
+            }
             next();
         } catch (err) {
             next(err);
