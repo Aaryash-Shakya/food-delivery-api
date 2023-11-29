@@ -2,9 +2,11 @@ import cityModel from "../models/cityModel";
 
 export class CityController {
     static async addCity(req, res, next) {
-        const { name, status } = req.body.name;
+        const { name, latitude,longitude, status } = req.body;
         const data = {
             name,
+            latitude,
+            longitude,
             status,
         };
         try {

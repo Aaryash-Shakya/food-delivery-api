@@ -1,23 +1,22 @@
-import { Double } from "mongodb";
 import mongoose, { model } from "mongoose";
 
 const citySchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            require: true,
+            required: true,
         },
         latitude: {
-            type: Double,
-            require: true,
+            type: Number,
+            required: true,
         },
         longitude: {
-            type: Double,
-            require: true,
+            type: Number,
+            required: true,
         },
         status: {
             type: String,
-            require: true,
+            required: true,
         },
     },
     {

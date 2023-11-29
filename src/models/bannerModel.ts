@@ -4,11 +4,11 @@ const bannerSchema = new mongoose.Schema(
     {
         banner: {
             type: String,
-            require: true,
+            required: true,
         },
         status: {
             type: Boolean,
-            require: true,
+            required: true,
             default: 1,
         },
     },
