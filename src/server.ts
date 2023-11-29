@@ -4,6 +4,7 @@ import { getEnvironmentVariables } from "./environments/environment";
 import userRouter from "./routers/userRouter";
 import bannerRouter from "./routers/bannerRouter";
 import * as bodyParser from "body-parser";
+import cityRouter from "./routers/cityRouter";
 
 export class Server {
     public app: express.Application = express();
@@ -45,6 +46,7 @@ export class Server {
         this.app.use("/public//uploads", express.static("public/uploads"));
         this.app.use("/api/user", userRouter);
         this.app.use("/api/banner", bannerRouter);
+        this.app.use("/api/city", cityRouter);
     }
 
     handle404Error() {

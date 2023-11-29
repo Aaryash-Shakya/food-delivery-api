@@ -16,7 +16,7 @@ export class BannerController {
 
     static async getBanners(req, res, next) {
         try {
-            const allBanners = await bannerModel.find({});
+            const allBanners = await bannerModel.find({ status: true });
             res.send(allBanners);
         } catch (err) {
             next(err);

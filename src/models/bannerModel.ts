@@ -7,7 +7,7 @@ const bannerSchema = new mongoose.Schema(
             require: true,
         },
         status: {
-            type: Number,
+            type: Boolean,
             require: true,
             default: 1,
         },
