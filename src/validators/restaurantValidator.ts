@@ -17,7 +17,7 @@ export class RestaurantValidator {
                 if (req.file) {
                     return true;
                 } else {
-                    Utils.createErrorAndThrow("File not uploaded", 400);
+                    Utils.createErrorAndThrow("File not uploaded", 404);
                 }
             }),
             body("open_time", "Opening time is required").isString(),
@@ -28,6 +28,7 @@ export class RestaurantValidator {
             body("address", "Address is required").isString(),
             body("location", "Location is required").isString(),
             body("cuisines", "Cuisines is required").isString(),
+            body("categories", "Categories is required").isString(),
             body("city_id", "City is required").isString(),
         ];
     }

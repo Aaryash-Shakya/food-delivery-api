@@ -6,9 +6,10 @@ import { Utils } from "../utils/utils";
 
 export class RestaurantController {
     static async addRestaurant(req, res, next) {
-        const { name, email, password, phone } = req.body;
-        const { res_name, location, address, open_time, close_time, status, cuisines,price, delivery_time, city_id} = req.body;
-        const path = req.file.path.replace(/\\/g,'/')
+        const { name, email, phone, password } = req.body;
+        const { res_name, location, address, open_time, close_time, status, cuisines, price, delivery_time, city_id } =
+            req.body;
+        const path = req.file.path.replace(/\\/g, "/");
         try {
             const existingUser = await userModel.findOne({ email: email });
             if (existingUser) {
@@ -34,16 +35,16 @@ export class RestaurantController {
             const user = await new userModel(data).save();
 
             // create category
-            const categoryData = JSON.parse(req.body.categories).map(item=>{
+            const categoryData = JSON.parse(req.body.categories).map((item) => {
                 return {
                     name: item,
-                    user_id: user._id
-                }
-            })
-            const categories = await categoryModel.insertMany(categoryData)
+                    user_id: user._id,
+                };
+            });
+            const categories = await categoryModel.insertMany(categoryData);
 
             // create restaurant
-            let restaurantData:any = {
+            let restaurantData: any = {
                 name: res_name,
                 cover: path,
                 location: JSON.parse(location),
@@ -56,14 +57,19 @@ export class RestaurantController {
                 delivery_time: parseInt(delivery_time),
                 user_id: user._id,
                 city_id,
+            };
+            if (req.body.description) {
+                restaurantData = { ...restaurantData, description: req.body.description };
             }
-            if(req.body.description){
-                restaurantData = {...restaurantData, description: req.body.description}
-            }
-            if(req.file){
-                restaurantData = {...restaurantData, cover: path}
-            }
-
+            // if (req.file) {
+            //     restaurantData = { ...restaurantData, cover: path };
+            // }
+            restaurantData = {...restaurantData, cover: 'test'}
+            const restaurant = await new restaurantModel(restaurantData).save();
+            res.status(200).json({
+                message: "Success",
+                restaurant: restaurant,
+            });
         } catch (err) {
             next(err);
         }

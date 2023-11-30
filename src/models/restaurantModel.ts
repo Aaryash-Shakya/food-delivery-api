@@ -29,6 +29,10 @@ const restaurantSchema = new mongoose.Schema(
             type: Array,
             required: true,
         },
+        categories: {
+            type: Array,
+            required: true,
+        },
         open_time: {
             type: String,
             required: true,

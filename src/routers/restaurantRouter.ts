@@ -16,18 +16,22 @@ class RestaurantRouter {
         this.deleteRoutes();
     }
 
-    getRoutes() {}
+    getRoutes() {
+        this.router.get("/test", function (req, res, next) {
+            res.send("error yaha cha");
+        });
+    }
 
     postRoutes() {
         this.router.post(
-            "add-restaurant",
+            "/add-restaurant",
             GlobalMiddleware.authorization,
             GlobalMiddleware.checkTypeAdmin,
-            new Multer().pMulter.single('cover'),
+            new Multer().pMulter.single("cover"),
             RestaurantValidator.addRestaurantValidator(),
             GlobalMiddleware.checkError,
-            RestaurantController.addRestaurant,
-        )
+            RestaurantController.addRestaurant
+        );
     }
 
     patchRoutes() {}
