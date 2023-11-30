@@ -17,9 +17,13 @@ class RestaurantRouter {
     }
 
     getRoutes() {
-        this.router.get("/test", function (req, res, next) {
-            res.send("error yaha cha");
-        });
+        this.router.get(
+            "/get-nearby-restaurants",
+            GlobalMiddleware.authorization,
+            RestaurantValidator.getNearbyRestaurantsValidator(),
+            GlobalMiddleware.checkError,
+            RestaurantController.getNearbyRestaurants
+        );
     }
 
     postRoutes() {

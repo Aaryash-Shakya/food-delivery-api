@@ -42,9 +42,11 @@ export class Server {
     }
 
     setRoutes() {
-        // this.app.use("/src/uploads", express.static("src/uploads"));
+        // multer
         this.app.use("/public/uploads", express.static("public/uploads"));
-        this.app.use("/public//uploads", express.static("public/uploads"));
+        // this.app.use("/public/uploads/restaurants", express.static("public/uploads/restaurants"));
+
+
         this.app.use("/api/user", userRouter);
         this.app.use("/api/banner", bannerRouter);
         this.app.use("/api/city", cityRouter);

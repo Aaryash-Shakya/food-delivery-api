@@ -42,6 +42,20 @@ export class RestaurantController {
                 };
             });
             const categories = await categoryModel.insertMany(categoryData);
+            // only add category name that doesn't exist
+            // const newCategory = req.body.categories.map((item) => ({
+            //     updateOne: {
+            //         filter: { name: item },
+            //         update: {
+            //             $setOnInsert: {
+            //                 name: item,
+            //                 user_id: user._id,
+            //             },
+            //         },
+            //         upsert: true,
+            //     },
+            // }));
+            // const categories = await categoryModel.bulkWrite(newCategory);
 
             // create restaurant
             let restaurantData: any = {
@@ -52,7 +66,7 @@ export class RestaurantController {
                 open_time,
                 close_time,
                 status,
-                cuisines: JSON.parse(cuisines),
+                cuisines: cuisines,
                 price: parseInt(price),
                 delivery_time: parseInt(delivery_time),
                 user_id: user._id,
@@ -61,14 +75,46 @@ export class RestaurantController {
             if (req.body.description) {
                 restaurantData = { ...restaurantData, description: req.body.description };
             }
-            // if (req.file) {
-            //     restaurantData = { ...restaurantData, cover: path };
-            // }
-            restaurantData = {...restaurantData, cover: 'test'}
+            if (req.file) {
+                restaurantData = { ...restaurantData, cover: path };
+            }
             const restaurant = await new restaurantModel(restaurantData).save();
             res.status(200).json({
                 message: "Success",
                 restaurant: restaurant,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    static async getNearbyRestaurants(req, res, next) {
+        const METERS_PER_KILOMETER = 1000;
+        const EARTH_RADIUS_KILOMETER = 6378.1;
+        const { lat, lon, radius } = req.query;
+        try {
+            const restaurants = await restaurantModel.find({
+                status: "active",
+                location: {
+                    // $nearSphere:{
+                    //     $geometry:{ 
+                    //         type: "Point",
+                    //         coordinates: [parseFloat(lon),parseFloat(lat)]
+                    //     },
+                    //     $maxDistance: radius * METERS_PER_KILOMETER
+                    // }
+                    $geoWithin: {
+                        $centerSphere: [
+                            // note home: lat: 27.698853 lon: 85.307705
+                            [parseFloat(lon),parseFloat(lat)],
+                            parseFloat(radius) / EARTH_RADIUS_KILOMETER,
+                        ],
+                    },
+                },
+            });
+            let justName = restaurants.map((i) => i.name);
+            res.status(200).json({
+                justName,
             });
         } catch (err) {
             next(err);
