@@ -120,4 +120,39 @@ export class RestaurantController {
             next(err);
         }
     }
+    
+    // change to search by keywords instead
+    static async searchNearbyRestaurants(req, res, next) {
+        const METERS_PER_KILOMETER = 1000;
+        const EARTH_RADIUS_KILOMETER = 6378.1;
+        const { lat, lon, radius, searchName } = req.query;
+        try {
+            const restaurants = await restaurantModel.find({
+                status: "active",
+                name: {$regex: searchName, $options: 'i'},
+                location: {
+                    // $nearSphere:{
+                    //     $geometry:{ 
+                    //         type: "Point",
+                    //         coordinates: [parseFloat(lon),parseFloat(lat)]
+                    //     },
+                    //     $maxDistance: radius * METERS_PER_KILOMETER
+                    // }
+                    $geoWithin: {
+                        $centerSphere: [
+                            // note home: lat: 27.698853 lon: 85.307705
+                            [parseFloat(lon),parseFloat(lat)],
+                            parseFloat(radius) / EARTH_RADIUS_KILOMETER,
+                        ],
+                    },
+                },
+            });
+            let justName = restaurants.map((i) => i.name);
+            res.status(200).json({
+                justName,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }

@@ -24,6 +24,13 @@ class RestaurantRouter {
             GlobalMiddleware.checkError,
             RestaurantController.getNearbyRestaurants
         );
+        this.router.get(
+            "/search-nearby-restaurants",
+            GlobalMiddleware.authorization,
+            RestaurantValidator.searchNearbyRestaurantsValidator(),
+            GlobalMiddleware.checkError,
+            RestaurantController.searchNearbyRestaurants
+        );
     }
 
     postRoutes() {
