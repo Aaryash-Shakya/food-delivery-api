@@ -155,4 +155,15 @@ export class RestaurantController {
             next(err);
         }
     }
+
+    static async getRestaurants(req,res,next){
+        try {
+            const restaurants = await restaurantModel.find()
+            res.status(200).json({
+                restaurants,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }

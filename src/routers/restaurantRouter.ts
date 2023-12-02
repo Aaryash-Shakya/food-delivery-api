@@ -31,6 +31,13 @@ class RestaurantRouter {
             GlobalMiddleware.checkError,
             RestaurantController.searchNearbyRestaurants
         );
+        this.router.get(
+            "/get-restaurants",
+            GlobalMiddleware.authorization,
+            GlobalMiddleware.checkTypeAdmin,
+            GlobalMiddleware.checkError,
+            RestaurantController.getRestaurants
+        );
     }
 
     postRoutes() {
