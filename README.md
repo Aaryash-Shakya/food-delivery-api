@@ -13,8 +13,9 @@ Welcome to the Food Delivery API, a complete backend service for a food delivery
 
 - **User Authentication:** Secure user registration and login with JWT (JSON Web Tokens) for authentication.
 - **Email Verification:** Verify user email with noedmailer and mailtrap.
-- **Restaurant Management:** Add, update, and delete restaurant information. (coming soon)
-- **Menu Management:** Create and manage restaurant menus with items, prices, and descriptions. (coming soon)
+- **Restaurant Management:** Add, update, and delete restaurant information.
+- **Geospatial Query:** Find nearby restaurants using users coordinated.
+- **Menu Management:** Create and manage restaurant menus with items, prices, and descriptions.
 - **Order Management:** Allow users to place orders and track their delivery status. (coming soon)
 - **Real-time Updates:** Real-time updates on order status using WebSockets. (coming soon)
 
