@@ -4,7 +4,7 @@ import { Utils } from "./utils";
 const storageOptions = multer.diskStorage({
     destination: (req, file, callback) => {
         // callback(null, "./src/uploads");
-        callback(null, "./public/uploads");
+        callback(null, "./public/uploads/" + file.fieldname);
     },
     filename: (req, file, callback) => {
         const randomNumber = Utils.generateOTP();
