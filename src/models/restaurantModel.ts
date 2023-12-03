@@ -1,14 +1,16 @@
-    import mongoose, { model } from "mongoose";
+import mongoose, { model } from "mongoose";
 
 const restaurantSchema = new mongoose.Schema(
     {
         user_id: {
             type: mongoose.Types.ObjectId,
             required: true,
+            ref: "cities",
         },
         city_id: {
             type: mongoose.Types.ObjectId,
             required: true,
+            ref: "users",
         },
         name: {
             type: String,

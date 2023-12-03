@@ -39,7 +39,7 @@ export class UserController {
             const payload = {
                 userId: user._id,
                 email: user.email,
-                type: user.type
+                type: user.type,
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
                 expiresIn: "1h", // 1 hour
@@ -203,7 +203,7 @@ export class UserController {
                 type: user.type,
             };
             const token = jwt.sign(payload, getEnvironmentVariables().jwt_secret_key, {
-                expiresIn: "1d", // 1 day
+                expiresIn: "10d", // 10 day
                 issuer: "fooddelivery@api.com",
             });
 

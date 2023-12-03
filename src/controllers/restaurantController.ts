@@ -7,8 +7,19 @@ import { Utils } from "../utils/utils";
 export class RestaurantController {
     static async addRestaurant(req, res, next) {
         const { name, email, phone, password } = req.body;
-        const { res_name, location, address, open_time, close_time, status, cuisines, price, delivery_time, city_id } =
-            req.body;
+        const {
+            res_name,
+            location,
+            address,
+            open_time,
+            close_time,
+            status,
+            cuisines,
+            categories,
+            price,
+            delivery_time,
+            city_id,
+        } = req.body;
         const path = req.file.path.replace(/\\/g, "/");
         try {
             const existingUser = await userModel.findOne({ email: email });
@@ -19,7 +30,7 @@ export class RestaurantController {
             // generate verification OTP
             let verification_token = Utils.generateOTP();
 
-            // post user
+            // create user data
             const data = {
                 name,
                 email,
@@ -58,7 +69,8 @@ export class RestaurantController {
                 open_time,
                 close_time,
                 status,
-                cuisines: cuisines,
+                cuisines: JSON.parse(cuisines),
+                categories: JSON.parse(categories),
                 price: parseInt(price),
                 delivery_time: parseInt(delivery_time),
                 user_id: user._id,
@@ -73,17 +85,18 @@ export class RestaurantController {
             const restaurant = await new restaurantModel(restaurantData).save();
 
             // create category
-            const categoryData = JSON.parse(req.body.categories).map((item) => {
+            const categoryData = JSON.parse(categories).map((item) => {
                 return {
                     restaurant_id: restaurant._id,
                     name: item,
                 };
             });
-            const categories = await categoryModel.insertMany(categoryData);
+            const newCategories = await categoryModel.insertMany(categoryData);
 
             res.status(200).json({
                 message: "Success",
                 restaurant: restaurant,
+                categories: newCategories,
             });
         } catch (err) {
             next(err);
@@ -99,7 +112,7 @@ export class RestaurantController {
                 status: "active",
                 location: {
                     // $nearSphere:{
-                    //     $geometry:{ 
+                    //     $geometry:{
                     //         type: "Point",
                     //         coordinates: [parseFloat(lon),parseFloat(lat)]
                     //     },
@@ -108,21 +121,20 @@ export class RestaurantController {
                     $geoWithin: {
                         $centerSphere: [
                             // note home: lat: 27.698853 lon: 85.307705
-                            [parseFloat(lon),parseFloat(lat)],
+                            [parseFloat(lon), parseFloat(lat)],
                             parseFloat(radius) / EARTH_RADIUS_KILOMETER,
                         ],
                     },
                 },
             });
-            let justName = restaurants.map((i) => i.name);
             res.status(200).json({
-                justName,
+                restaurants,
             });
         } catch (err) {
             next(err);
         }
     }
-    
+
     // change to search by keywords instead
     static async searchNearbyRestaurants(req, res, next) {
         const METERS_PER_KILOMETER = 1000;
@@ -131,10 +143,10 @@ export class RestaurantController {
         try {
             const restaurants = await restaurantModel.find({
                 status: "active",
-                name: {$regex: searchName, $options: 'i'},
+                name: { $regex: searchName, $options: "i" },
                 location: {
                     // $nearSphere:{
-                    //     $geometry:{ 
+                    //     $geometry:{
                     //         type: "Point",
                     //         coordinates: [parseFloat(lon),parseFloat(lat)]
                     //     },
@@ -143,7 +155,7 @@ export class RestaurantController {
                     $geoWithin: {
                         $centerSphere: [
                             // note home: lat: 27.698853 lon: 85.307705
-                            [parseFloat(lon),parseFloat(lat)],
+                            [parseFloat(lon), parseFloat(lat)],
                             parseFloat(radius) / EARTH_RADIUS_KILOMETER,
                         ],
                     },
@@ -158,9 +170,9 @@ export class RestaurantController {
         }
     }
 
-    static async getRestaurants(req,res,next){
+    static async getRestaurants(req, res, next) {
         try {
-            const restaurants = await restaurantModel.find()
+            const restaurants = await restaurantModel.find();
             res.status(200).json({
                 restaurants,
             });
