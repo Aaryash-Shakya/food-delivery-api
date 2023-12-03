@@ -34,14 +34,6 @@ export class RestaurantController {
             };
             const user = await new userModel(data).save();
 
-            // create category
-            const categoryData = JSON.parse(req.body.categories).map((item) => {
-                return {
-                    name: item,
-                    user_id: user._id,
-                };
-            });
-            const categories = await categoryModel.insertMany(categoryData);
             // only add category name that doesn't exist
             // const newCategory = req.body.categories.map((item) => ({
             //     updateOne: {
@@ -79,6 +71,16 @@ export class RestaurantController {
                 restaurantData = { ...restaurantData, cover: path };
             }
             const restaurant = await new restaurantModel(restaurantData).save();
+
+            // create category
+            const categoryData = JSON.parse(req.body.categories).map((item) => {
+                return {
+                    restaurant_id: restaurant._id,
+                    name: item,
+                };
+            });
+            const categories = await categoryModel.insertMany(categoryData);
+
             res.status(200).json({
                 message: "Success",
                 restaurant: restaurant,
