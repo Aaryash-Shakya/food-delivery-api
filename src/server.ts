@@ -7,6 +7,7 @@ import * as bodyParser from "body-parser";
 import cityRouter from "./routers/cityRouter";
 import restaurantRouter from "./routers/restaurantRouter";
 import categoryRouter from "./routers/categoryRouter";
+import itemRouter from "./routers/itemRouter";
 
 export class Server {
     public app: express.Application = express();
@@ -47,12 +48,12 @@ export class Server {
         this.app.use("/public/uploads", express.static("public/uploads"));
         // this.app.use("/public/uploads/restaurants", express.static("public/uploads/restaurants"));
 
-
         this.app.use("/api/user", userRouter);
         this.app.use("/api/banner", bannerRouter);
         this.app.use("/api/city", cityRouter);
         this.app.use("/api/restaurant", restaurantRouter);
         this.app.use("/api/category", categoryRouter);
+        this.app.use("/api/item", itemRouter);
     }
 
     handle404Error() {
