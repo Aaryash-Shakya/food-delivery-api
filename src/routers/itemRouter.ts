@@ -18,8 +18,9 @@ class BannerRouter {
 
     getRoutes() {
         this.router.get(
-            "/get-items",
+            "/get-items/:restaurant_id",
             GlobalMiddleware.authorization,
+            ItemValidator.getItemsValidator(),
             GlobalMiddleware.checkError,
             ItemController.getItems
         );

@@ -1,9 +1,31 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { Utils } from "../utils/utils";
 import restaurantModel from "../models/restaurantModel";
 import categoryModel from "../models/categoryModel";
 
 export class ItemValidator {
+    static getItemsValidator() {
+        return [
+            param("restaurant_id", "Restaurant ID is required")
+                .isString()
+                .custom((restaurant_id, { req }) => {
+                    return restaurantModel
+                        .findById(restaurant_id)
+                        .then((restaurant) => {
+                            if (restaurant) {
+                                req.restaurant = restaurant;
+                                return true;
+                            } else {
+                                Utils.createErrorAndThrow("Restaurant doesn't exist", 400);
+                            }
+                        })
+                        .catch((err) => {
+                            throw err;
+                        });
+                }),
+        ];
+    }
+
     static addItemValidator() {
         return [
             body("restaurant_id", "Restaurant ID is required")
