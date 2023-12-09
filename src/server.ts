@@ -8,6 +8,7 @@ import cityRouter from "./routers/cityRouter";
 import restaurantRouter from "./routers/restaurantRouter";
 import categoryRouter from "./routers/categoryRouter";
 import itemRouter from "./routers/itemRouter";
+import addressRouter from "./routers/addressRouter";
 
 export class Server {
     public app: express.Application = express();
@@ -54,6 +55,7 @@ export class Server {
         this.app.use("/api/restaurant", restaurantRouter);
         this.app.use("/api/category", categoryRouter);
         this.app.use("/api/item", itemRouter);
+        this.app.use("/api/address", addressRouter);
     }
 
     handle404Error() {
