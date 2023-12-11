@@ -124,3 +124,32 @@ We welcome contributions from the open-source community to enhance my api's feat
       
     Your contribution will be reviewed, and upon approval, it will be merged into the main repository.
 
+## API Reference
+
+#### Sign up
+
+```http
+  GET /api/user/signup
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `name` | `string` | **Required**. Your name |
+| `email` | `string` | **Required**. Your email |
+| `phone` | `string` | **Required**. Your phone number |
+| `password` | `string` | **Required**. Your plaintext password |
+| `type` | `string` | **Required**. Type of account ( admin/restaurant/customer )  |
+| `status` | `string` | **Required**. def: active |
+
+#### Login
+
+```http
+  GET /api/user/login
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. Account email |
+| `password`      | `string` | **Required**. Account plaintext password |
+
+
