@@ -126,10 +126,12 @@ We welcome contributions from the open-source community to enhance my api's feat
 
 ## API Reference
 
+### User Routes
+
 #### Sign up
 
 ```http
-  GET /api/user/signup
+POST /api/user/signup
 ```
 
 | Parameter | Type     | Description                |
@@ -137,19 +139,87 @@ We welcome contributions from the open-source community to enhance my api's feat
 | `name` | `string` | **Required**. Your name |
 | `email` | `string` | **Required**. Your email |
 | `phone` | `string` | **Required**. Your phone number |
-| `password` | `string` | **Required**. Your plaintext password |
+| `password` | `string` | **Required**. Your password plaintext |
 | `type` | `string` | **Required**. Type of account ( admin/restaurant/customer )  |
 | `status` | `string` | **Required**. def: active |
+
+#### Verify email
+
+```http
+PATCH /api/user/verify-email
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `email` | `string` | **Required**. Your email |
+| `verification_token` | `number` | **Required**. Your verification OTP sent to your email |
+
+#### Resend verification email
+
+```http
+PATCH /api/user/resend-verification-token
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `email` | `string` | **Required**. Your email |
 
 #### Login
 
 ```http
-  GET /api/user/login
+POST /api/user/login
 ```
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `email`      | `string` | **Required**. Account email |
-| `password`      | `string` | **Required**. Account plaintext password |
+| `email`      | `string` | **Required**. Your email |
+| `password`      | `string` | **Required**. Your password plaintext |
 
+#### Forgot password
+
+```http
+POST /api/user/forgot-password
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. Your email |
+
+#### Reset password
+
+```http
+PATCH /api/user/reset-password
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. Your email |
+| `password`      | `string` | **Required**. New password |
+| `password_reset_token`      | `number` | **Required**. Reset token sent in email. |
+| `Authorization`      | `string` | **Required**. Bearer token received from /forgot-password |
+
+#### Get profile
+
+```http
+GET /api/user/get-profile/:email
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. Your email |
+| `name`      | `string` | New name |
+| `phone`      | `string` | New phone |
+| `type`      | `string` | New account type |
+| `Authorization`      | `string` | **Required**. Bearer token received from /login |
+
+#### Update profile
+
+```http
+PUT /api/user/update-profile
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. Your email |
+| `Authorization`      | `string` | **Required**. Bearer token received from /login |
 
