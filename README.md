@@ -126,6 +126,10 @@ We welcome contributions from the open-source community to enhance my api's feat
 
 ## API Reference
 
+- [User Routes](#user-routes)
+- [City Routes](#city-routes)
+- [Banner Routes](#banner-routes)
+
 ### User Routes
 
 #### Sign up
@@ -222,4 +226,61 @@ PUT /api/user/update-profile
 | :-------- | :------- | :-------------------------------- |
 | `email`      | `string` | **Required**. Your email |
 | `Authorization`      | `string` | **Required**. Bearer token received from /login |
+
+
+
+### City Routes
+
+#### Add city
+
+```http
+POST /api/city/add-city
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `name`      | `string` | **Required**. City name |
+| `longitude`      | `number` | **Required**. Longitude of city |
+| `latitude`      | `number` | **Required**. Latitude of city |
+| `status`      | `string` | **Required**. Is the service active (active/inactive) |
+| `Authorization`      | `string` | **Required**. **Admin** bearer token received from /login |
+
+#### Get cities
+
+```http
+GET /api/city/get-cities
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Authorization`      | `string` | **Required**. Bearer token received from /login |
+
+
+
+### Banner Routes
+
+#### Add banner
+
+```http
+POST /api/banner/add-banner
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `banner`      | `file` | **Required**. Restaurant banner image (.jpg or .png) |
+| `Authorization`      | `string` | **Required**. **Admin** bearer token received from /login |
+
+#### Get banners
+
+```http
+GET /api/banner/get-banners
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Authorization`      | `string` | **Required**. Bearer token received from /login |
+
+
+
+
 
