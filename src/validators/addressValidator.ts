@@ -6,7 +6,7 @@ export class addressValidator {
             body("title", "Title is required").isString(),
             body("landmark", "Landmark is required").isString(),
             body("address", "Address is required").isString(),
-            body("house", "House no is required").isString(),
+            body("house", "House no is required").isString().optional(),
             body("latitude", "Latitude is required").isNumeric(),
             body("longitude", "Longitude is required").isNumeric(),
         ];

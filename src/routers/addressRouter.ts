@@ -25,11 +25,13 @@ class AddressRouter {
     }
 
     postRoutes() {
-        this.router.post('/add-address',
-        GlobalMiddleware.authorization,
-        addressValidator.addAddressValidator(),
-        GlobalMiddleware.checkError,
-        AddressController.addAddress)
+        this.router.post(
+            "/add-address",
+            GlobalMiddleware.authorization,
+            addressValidator.addAddressValidator(),
+            GlobalMiddleware.checkError,
+            AddressController.addAddress
+        );
     }
     patchRoutes() {}
 

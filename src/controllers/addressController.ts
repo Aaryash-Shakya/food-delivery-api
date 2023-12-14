@@ -15,7 +15,8 @@ export class AddressController {
     }
 
     static async addAddress(req, res, next) {
-        const { title, address, landmark, house, latitude, longitude } = req.body;
+        const { title, address, landmark, latitude, longitude } = req.body;
+        let house = req.body.house || 0;
         const user_id = req.decoded.userId;
         try {
             const addressData = {
