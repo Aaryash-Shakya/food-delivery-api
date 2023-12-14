@@ -127,8 +127,11 @@ We welcome contributions from the open-source community to enhance my api's feat
 ## API Reference
 
 - [User Routes](#user-routes)
+- [Address Routes](#address-routes)
 - [City Routes](#city-routes)
 - [Banner Routes](#banner-routes)
+
+<hr/>
 
 ### User Routes
 
@@ -227,7 +230,37 @@ PUT /api/user/update-profile
 | `email`      | `string` | **Required**. Your email |
 | `Authorization`      | `string` | **Required**. Bearer token received from /login |
 
+<hr/>
 
+### Address Routes
+
+#### Add addresses
+
+```http
+POST /api/user/add-address
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `title`      | `string` | **Required**. Name of the place you live |
+| `address`      | `string` | **Required**. format <title, area, city> |
+| `landmark`      | `string` | **Required**. Landmark near your house or  |
+| `house`      | `string` |  House number |
+| `latitude`      | `number` | **Required**. User's latitude |
+| `longitude`      | `number` | **Required**. User's longitude |
+| `Authorization`      | `string` | **Required**. Bearer token received from /login |
+
+#### Get addresses
+
+```http
+GET /api/user/get-addresses
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `Authorization`      | `string` | **Required**. Bearer token received from /login |
+
+<hr/>
 
 ### City Routes
 
@@ -255,7 +288,7 @@ GET /api/city/get-cities
 | :-------- | :------- | :------------------------- |
 | `Authorization`      | `string` | **Required**. Bearer token received from /login |
 
-
+<hr/>
 
 ### Banner Routes
 
